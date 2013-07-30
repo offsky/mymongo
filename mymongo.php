@@ -26,6 +26,7 @@ LICENSE
 class mymongo {
 	public $connected = false; //true when we are connected to a server
 	private $MyHost = null; //the server that I am connecting to in the cloud
+	private $MyHosts = null; //Generated from $MyHosts, this is an array of the individual hosts
 	private $MyUser = null; //my username for the database on that server (not the same as my username for the cloud service)
 	private $MyPass = null; //my password for the database on that server
 	private $MyDB = null; //the name of the database in the cloud
@@ -60,6 +61,7 @@ class mymongo {
 */
 	public function init($host, $user, $pass, $database, $replicaSet=null) {		
 		$this->MyHost = $host;
+		$this->MyHosts = explode(",", $this->MyHost);
 		$this->MyUser = $user;
 		$this->MyPass = $pass;
 		$this->MyDB = $database;
@@ -77,40 +79,31 @@ class mymongo {
 		if(!empty($this->replicaSet)) $flags['replicaSet'] = $this->replicaSet;
 
 		//try to connect to the db. Keep a low timeout to prevent stalled DB crashing apache with hung PHP jobs
-		try {
-			$this->m = new MongoClient("mongodb://".$this->MyUser.":".$this->MyPass."@".$this->MyHost."/".$this->MyDB, $flags);	
-		} catch(MongoConnectionException $e) {
-			$this->log_db_error("CONNECT",$this->MyDB,$e->getMessage(),$e->getCode());
-			$this->closeDatabase();
-			$this->m = null;
-			
-			//try again without the replica set
+		$success = $this->connectClient();
+		
+		if(!$success && !empty($this->replicaSet)) {	//try again without the replica set.  It will connect randomly to either server, so 50% of the time writes will fail because it is on the secondary
 			$this->replicaSet = "";
-			$flags = array("connectTimeoutMS" => 500);
-			ini_set("mongo.ping_interval",1);
-			try {
-				$this->m = new MongoClient("mongodb://".$this->MyUser.":".$this->MyPass."@".$this->MyHost."/".$this->MyDB, $flags);	
-			} catch(MongoConnectionException $e) {
-				$this->log_db_error("CONNECT2",$this->MyDB,$e->getMessage(),$e->getCode());
-				$this->closeDatabase();
-				$this->m = null;
-								
-				//try again with first of pair only
-				$split = explode(",", $this->MyHost);
-				$this->MyHost = $split[0];
-				$flags = array("connectTimeoutMS" => 500);
-				try {
-					$this->m = new MongoClient("mongodb://".$this->MyUser.":".$this->MyPass."@".$this->MyHost."/".$this->MyDB, $flags);	
-				} catch(MongoConnectionException $e) {
-					$this->log_db_error("CONNECT3",$this->MyDB,$e->getMessage(),$e->getCode());
-					$this->closeDatabase();
-					$this->m = null;
-					return false;
-				}
-			}			
+			$this->connectionType = 1;
+			$success = $this->connectClient();
 		}
-				
-		//try to select the db
+		
+		if(!$success && count($this->MyHosts)) { //try again with first of pair only
+			$this->MyHost = array_shift($this->MyHosts);
+		
+			$this->connectionType = 2;
+			$success = $this->connectClient();
+		}
+		
+		if(!$success && count($this->MyHosts)) {	//try again with first of pair only
+			$this->MyHost = array_shift($this->MyHosts);
+	
+			$this->connectionType = 3;
+			$success = $this->connectClient();
+		}
+
+		if(empty($this->m)) return false;
+		
+		//try to select the db		
 		try {
 			$this->db = $this->m->selectDB($this->MyDB); // select a database
 			$this->db->setReadPreference(MongoClient::RP_PRIMARY_PREFERRED); //default to primary prefered which is better than default of primary only
@@ -126,7 +119,50 @@ class mymongo {
 		$this->connected = true;
 		return true;
 	}
+
+/* CONNECTCLIENT ==================================================================================
+	Connects the MongoClient using the class settings.
+*/
+	private function connectClient() {		
+		if(empty($this->MyHost)) return false;
+		
+		$flags = array("connectTimeoutMS" => 500);
+		if(!empty($this->replicaSet)) $flags['replicaSet'] = $this->replicaSet;
+		
+		try {			
+			$this->m = new MongoClient("mongodb://".$this->MyUser.":".$this->MyPass."@".$this->MyHost."/".$this->MyDB, $flags);	
+		} catch(MongoConnectionException $e) {
+			ini_set("mongo.ping_interval",1); //reduce ping interval in an attempt to jump start the discovery process
+
+			$this->log_db_error("CONNECT",$this->MyDB,$e->getMessage(),$e->getCode());
+			$this->closeDatabase();
+			$this->m = null;
+			return false;
+		}
+		return true;
+	}
 	
+/* RECONNECT ============================================================================
+	A write failed, so we need to reconnect to a different db server
+*/
+	public function reconnect($message) {		
+		ini_set("mongo.ping_interval",1);
+		if(!count($this->MyHosts)) return false; //if we don't have anything else to try, fail
+		$this->replicaSet = "";
+		
+		$bad = str_replace(": not master","",$message); //find out who is failing
+		
+		$this->MyHost = array_shift($this->MyHosts);
+		if($bad==$this->MyHost) {
+			if(count($this->MyHosts)) $this->MyHost = array_shift($this->MyHosts);
+			else return false;
+		}
+
+		$this->connectionType = 4;
+		return $this->connect(); //reconnect
+	}
+	
+		
 /* DISCONNECT ============================================================================
 	Prevents further calls from working
 */
@@ -192,13 +228,8 @@ class mymongo {
 			$this->log_db_error("INSERT1",$this->MyTable,$e->getMessage(),$e->getCode(),$this->serializeQuery($object));
 			
 			if($e->getCode()==10058 || $e->getCode()==16) { //not master, attempt to connect to the other one
-				ini_set("mongo.ping_interval",1);
-				$split = explode(",", $this->MyHost);
-				if(count($split)==1) return null; //If I don't have another to switch to, cancel. This insures we don't get into infinite loop
-				$bad = str_replace(": not master","",$e->getMessage()); //find out who is failing
-				if($bad==$split[0]) $this->MyHost = $split[1];
-				else $this->MyHost = $split[0];
-				$this->connect(); //reconnect
+				$success = $this->reconnect($e->getMessage());
+				if(!$success) return null;
 				return $this->insert($object,$safe,$timeout);
 			}
 			
@@ -234,13 +265,8 @@ class mymongo {
 			$this->log_db_error("REMOVE1",$this->MyTable,$e->getMessage(),$e->getCode(),json_encode($criteria));
 			
 			if($e->getCode()==10056 || $e->getCode()==16) { //not master, attempt to connect to the other one
-				ini_set("mongo.ping_interval",1);
-				$split = explode(",", $this->MyHost);
-				if(count($split)==1) return null; //If I don't have another to switch to, cancel
-				$bad = str_replace(": not master","",$e->getMessage()); //find out who is failing
-				if($bad==$split[0]) $this->MyHost = $split[1];
-				else $this->MyHost = $split[0];
-				$this->connect(); //reconnect
+				$success = $this->reconnect($e->getMessage());
+				if(!$success) return null;
 				return $this->remove($criteria,$safe,$timeout);
 			}
 			
@@ -280,14 +306,9 @@ class mymongo {
 		} catch(MongoException $e) {
 			$this->log_db_error("UPDATE1",$this->MyTable,$e->getMessage(),$e->getCode(),$this->serializeQuery(array($criteria,$newdata)));
 			
-			if($e->getCode()==10056 || $e->getCode()==16) { //not master, attempt to connect to the other one
-				ini_set("mongo.ping_interval",1);
-				$split = explode(",", $this->MyHost);
-				if(count($split)==1) return null; //If I don't have another to switch to, cancel
-				$bad = str_replace(": not master","",$e->getMessage()); //find out who is failing
-				if($bad==$split[0]) $this->MyHost = $split[1];
-				else $this->MyHost = $split[0];
-				$this->connect(); //reconnect
+			if($e->getCode()==10054 || $e->getCode()==16) { //not master, attempt to connect to the other one
+				$success = $this->reconnect($e->getMessage());
+				if(!$success) return null;
 				return $this->update($criteria,$newdata,$safe,$upsert,$timeout);
 			}
 			
@@ -549,4 +570,5 @@ class mymongo {
 	}
 	// @codeCoverageIgnoreEnd
 
+}
 ?>
