@@ -83,21 +83,16 @@ class mymongo {
 		
 		if(!$success && !empty($this->replicaSet)) {	//try again without the replica set.  It will connect randomly to either server, so 50% of the time writes will fail because it is on the secondary
 			$this->replicaSet = "";
-			$this->connectionType = 1;
 			$success = $this->connectClient();
 		}
 		
 		if(!$success && count($this->MyHosts)) { //try again with first of pair only
 			$this->MyHost = array_shift($this->MyHosts);
-		
-			$this->connectionType = 2;
 			$success = $this->connectClient();
 		}
 		
 		if(!$success && count($this->MyHosts)) {	//try again with first of pair only
 			$this->MyHost = array_shift($this->MyHosts);
-	
-			$this->connectionType = 3;
 			$success = $this->connectClient();
 		}
 
@@ -158,7 +153,6 @@ class mymongo {
 			else return false;
 		}
 
-		$this->connectionType = 4;
 		return $this->connect(); //reconnect
 	}
 	
