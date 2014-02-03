@@ -3,16 +3,23 @@
 <table class="table table-striped table-bordered table-hover">
 	<thead><tr>
 		<th>Name</th>
+		<th>Collections</th>
+		<th>Objects</th>
+		<th>Size</th>
 		<th>Health</th>
 		<th>Version</th>
 	</tr></thead>
 	<tbody>
 	<tr ng-repeat="db in databases">
 		<td><a href="#/db/{{db.name}}">{{db.name}}</a></td>
+		<td>{{db.stats.collections}}</td>
+		<td>{{db.stats.objects}}</td>
+		<td>{{db.stats.fileSize}}</td>
 		<td>{{db.health}}</td>
 		<td>{{db.info.version}}</td>
 	</tr>
 	</tbody>
 </table>
 
+{{ databases }}
 </div>

@@ -11,6 +11,7 @@ angular.module('phpMongoAdmin').controller('cDatabases', ['$scope', '$rootScope'
 	// Called each time the view is loaded or reloaded
 	$scope.init = function() {
 		$rootScope.selectedDB = "";
+		$rootScope.pagetitle = " Databases";
 		console.log("cDatabases Init");
 	};
 

@@ -232,13 +232,19 @@ class mymongo {
 		$this->MyTable = $newTable;	
 	}
 	
-/* LISTTABLES ============================================================================
+/* LISTCOLLECTIONS ============================================================================
+	Returns information for each collection in this database
 */
-	public function listTables() {
+	public function listCollections() {
+		$result = array();
 		$collections = $this->db->listCollections();
 		foreach ($collections as $c) {
-			echo $c.", ";
+			$name = $c->getName();
+			$stats = $this->db->command(array("collStats"=>$name));
+
+			$result[] = array('name'=>$name,'stats'=>$stats);
 		}
+		return $result;
 	}
 	
 /* INSERT ================================================================================
@@ -807,20 +813,22 @@ class mymongo {
 	}
 	
 	/* INFO ============================================================================
-	
+		Returns diagnostic information about a database
 	*/	
 	public function info() {
 		$result = null;
 		if($this->db) {
 			try {
-				$result = $this->db->command(array('buildinfo'=>true)); 
+				$result = $this->db->command(array('buildinfo'=>1)); 
+				$result2 = $this->db->command(array('dbStats'=>1)); 
 			} catch(MongoException $e) {
 				$result = null;
 				$this->log_db_error("BuildInfo",'',$e->getMessage(),$e->getCode());
 			}
 		}
-		return $result;
+		return array($result,$result2);
 	}
+	
 /* PERFORMANCE ===========================================================================
 	if on beta, prints out some timing information
 */

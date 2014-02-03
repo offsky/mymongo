@@ -6,7 +6,8 @@
 
 angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase', ['$http', '$rootScope', function($http, $rootScope) {
 
-	$rootScope.databases = []; //a pristine copy of the books array
+	$rootScope.databases = {}; //The last copy of the list of databases and info
+	$rootScope.allCollections = {}; //The collections for the various databases
 
 	var apiPath = $$config.apiPath;
 
@@ -22,6 +23,7 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 				$rootScope.databases = data;
 				console.log("mDatabase INIT final");
 				// console.table(data);
+				$rootScope.$broadcast('update_databases');
 			})
 			.error(function(data) {
 				console.log("ERROR FETCHING mDatabase",data);
@@ -35,8 +37,27 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 		return $rootScope.databases[name];
 	};
 
+	//==================================================================
+	// Gets collections for this db 
+	function getCollections(name) {
+		console.log("collections",name,$rootScope.databases);
+
+		if($rootScope.allCollections[name]!=undefined) return $rootScope.allCollections[name];
+
+		$http.get(apiPath + '/collections.php?db='+name)
+			.success(function(data) {
+				$rootScope.allCollections[name] = data;
+				console.log("Collections");
+				console.log(data);
+				$rootScope.$broadcast('update_collections');
+			})
+			.error(function(data) {
+				console.log("ERROR FETCHING collections",data);
+			});
+	};
+
 
 	return {
-		init: init, get: get
+		init: init, get: get, getCollections:getCollections
 	};
 }]); //end factory and module

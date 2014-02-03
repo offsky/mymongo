@@ -6,6 +6,6 @@ angular.module('phpMongoAdmin', ['ngRoute','ngSanitize','phpMongoAdmin.filters',
   config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/databases', {templateUrl: 'views/databases.html', controller: 'cDatabases'});
     $routeProvider.when('/db/:name', {templateUrl: 'views/collections.html', controller: 'cCollections'});
-    $routeProvider.when('/db/:name/:collection', {templateUrl: 'views/collections.html', controller: 'cCollections'});
+    $routeProvider.when('/db/:name/:collection', {templateUrl: 'views/collection.html', controller: 'cCollection'});
     $routeProvider.otherwise({redirectTo: '/databases'});
   }]);

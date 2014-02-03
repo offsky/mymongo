@@ -1,15 +1,65 @@
 <div class="container" ng-init="init()" ><div class="row">
 
 <div class="col-md-2">
-<a href="#/db/{{selectedDB}}">Info</a>
+<a href="#/db/{{selectedDB}}">Info for {{ selectedDB }}</a>
 <hr />
 <b>Collections</b>
+
+<ul>
+	<li ng-repeat="c in collections"><a href="#/db/{{selectedDB}}/{{c.name}}">{{c.name}}</a></li>
+</ul>
+
 </div>
 <div class="col-md-10">
 
-<p>The collections for {{ selectedDB }}.</p>
+	<table class="table table-striped table-bordered table-hover">
+		<tbody>
+			<tr><th>Name</th><td>{{db.name}}</td></tr>
+			<tr><th>Host(s)</th><td>{{db.hosts}}</td></tr>
+			<tr><th>User</th><td>{{db.user}}</td></tr>
+			<tr><th>ReplicaSet</th><td>{{db.replicaSet}}</td></tr>
+			<tr><th>SSL</th><td>{{db.ssl}}</td></tr>
+		
+			<tr><th>Name</th><td>{{db.info.version}}</td></tr>
+			<tr><th>SysInfo</th><td>{{db.info.sysInfo}}</td></tr>
 
-{{ db }}
+			<tr><th>Collections</th><td>{{db.stats.collections}}</td></tr>
+			<tr><th>Objects</th><td>{{db.stats.objects}}</td></tr>
+			<tr><th>Indexes</th><td>{{db.stats.indexes}}</td></tr>
+
+			<tr><th>AvgObjSize</th><td>{{db.stats.avgObjSize}}</td></tr>
+			<tr><th>DataSize</th><td>{{db.stats.dataSize}}</td></tr>
+			<tr><th>StorageSize</th><td>{{db.stats.storageSize}}</td></tr>
+			<tr><th>IndexSize</th><td>{{db.stats.indexSize}}</td></tr>
+			<tr><th>FileSize</th><td>{{db.stats.fileSize}}</td></tr>
+		</tbody>
+	</table>
+
+	<table class="table table-striped table-bordered table-hover">
+		<thead>
+			<tr>
+				<th>Collection</th>
+				<th>Count</th>
+				<th>Size</th>
+				<th>AbvObjSize</th>
+				<th>StorageSize</th>
+				<th>Indexes</th>
+				<th>IndexSize</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="c in collections">
+				<td><a href="#/db/{{selectedDB}}/{{c.name}}">{{c.name}}</a></td>
+				<td>{{c.stats.count}}</td>
+				<td>{{c.stats.size}}</td>
+				<td>{{c.stats.avgObjSize}}</td>
+				<td>{{c.stats.storageSize}}</td>
+				<td>{{c.stats.nindexes}}</td>
+				<td>{{c.stats.totalIndexSize}}</td>
+			</tr>
+		</tbody>
+	</table>
+
 </div>
 
 </div></div>

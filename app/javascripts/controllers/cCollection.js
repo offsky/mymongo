@@ -3,11 +3,10 @@
 The controller for the top navigation. Also initializes the models
 -----------------------------------------------------------------*/
 
-angular.module('phpMongoAdmin').controller('cCollections', ['$scope', '$rootScope', '$routeParams', 'phpMongoAdmin.mDatabase', function($scope, $rootScope, $routeParams, Database) {
+angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope', '$routeParams', 'phpMongoAdmin.mDatabase', function($scope, $rootScope, $routeParams, Database) {
 
 	$rootScope.selectedDB = "";
-	$scope.db = null;
-	$scope.collections = null;
+	$rootScope.selectedCol = "";
 
 	//==================================================================
 	// Called each time the view is loaded or reloaded
@@ -15,6 +14,7 @@ angular.module('phpMongoAdmin').controller('cCollections', ['$scope', '$rootScop
 		console.log("Collection Init");
 		
 		$rootScope.selectedDB = $routeParams.name;
+		$rootScope.selectedCol = $routeParams.collection;
 
 		$scope.update();
 	};
@@ -33,10 +33,7 @@ angular.module('phpMongoAdmin').controller('cCollections', ['$scope', '$rootScop
 
 	$scope.update = function() {
 		console.log("cCollection update");
-		$rootScope.pagetitle = $rootScope.selectedDB;
-
-		$scope.db = Database.get($rootScope.selectedDB);
-		$scope.collections = Database.getCollections($rootScope.selectedDB);
+		
 	}
 
 }]);
