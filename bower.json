@@ -1,10 +1,12 @@
 {
-  "name": "outline",
+  "name": "phpMongoAdmin",
   "version": "0.1.0",
   "dependencies": {
-    "jquery": "1.10.1",
-    "angular": "1.0.7",
-    "angular-sanitize": "1.0.7"
+    "jquery": "1.11.1",
+    "angular": "1.2.4",
+    "angular-sanitize": "1.2.4",
+    "bootstrap": "3.0.0",
+    "angular-bootstrap": "0.10.0"
   },
   "devDependencies": {
     "angular-mocks": "1.0.7",

@@ -1,10 +1,11 @@
 'use strict';
-
+	
 
 // Declare app level module which depends on filters, and services
-angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives', 'myApp.controllers']).
+angular.module('phpMongoAdmin', ['ngRoute','ngSanitize','phpMongoAdmin.filters', 'phpMongoAdmin.directives', 'phpMongoAdmin.mDatabase', 'ui.bootstrap']).
   config(['$routeProvider', function($routeProvider) {
-    $routeProvider.when('/view1', {templateUrl: 'views/partial1.html', controller: 'MyCtrl1'});
-    $routeProvider.when('/view2', {templateUrl: 'views/partial2.html', controller: 'MyCtrl2'});
-    $routeProvider.otherwise({redirectTo: '/view1'});
+    $routeProvider.when('/databases', {templateUrl: 'views/databases.html', controller: 'cDatabases'});
+    $routeProvider.when('/db/:name', {templateUrl: 'views/collections.html', controller: 'cCollections'});
+    $routeProvider.when('/db/:name/:collection', {templateUrl: 'views/collections.html', controller: 'cCollections'});
+    $routeProvider.otherwise({redirectTo: '/databases'});
   }]);

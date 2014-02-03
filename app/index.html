@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" ng-app="myApp">
+<html lang="en" ng-app="phpMongoAdmin">
 <head>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
   <meta charset="utf-8">
@@ -26,28 +26,34 @@
   <link rel="alternate" type="application/rss+xml" title="RSS" href="http://www.toodledo.com/info/news_rss.php" />
 
   <!-- build:css stylesheets/styles.css -->
+  <link rel="stylesheet" href="bower_components/bootstrap/css/bootstrap.css"/>
+  <link rel="stylesheet" href="bower_components/bootstrap/css/bootstrap-theme.css"/>
   <link rel="stylesheet" href="stylesheets/app.css"/>
   <!-- endbuild -->
 
 
 </head>
 <body>
-  <ul class="menu">
-    <li><a href="#/view1">view1</a></li>
-    <li><a href="#/view2">view2</a></li>
-  </ul>
+
+  <div ng-include src="'views/navbar.html'" ng-controller="cNav" ng-init="init()"></div>
 
   <div ng-view></div>
 
-  <div>Angular seed app: v<span app-version></span></div>
 
   <!-- build:js javascripts/scripts.js -->
   <script src="bower_components/jquery/jquery.js"></script>
   <script src="bower_components/angular/angular.js"></script>
+  <script src="bower_components/angular-bootstrap/ui-bootstrap.js"></script>
+  <script src="bower_components/angular-route/angular-route.js"></script>
   <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+
+  <script src="javascripts/config.js"></script>
   <script src="javascripts/app.js"></script>
   <script src="javascripts/services.js"></script>
-  <script src="javascripts/controllers.js"></script>
+  <script src="javascripts/controllers/cNav.js"></script>
+  <script src="javascripts/controllers/cDatabases.js"></script>
+  <script src="javascripts/controllers/cCollections.js"></script>
+  <script src="javascripts/models/mDatabase.js"></script>
   <script src="javascripts/filters.js"></script>
   <script src="javascripts/directives.js"></script>
   <!-- endbuild -->

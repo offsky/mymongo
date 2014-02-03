@@ -1,15 +1,16 @@
 <?php
 
-require_once("../../config.php");
+require_once("../../../php/config.php");
 
 $mongo = new mymongo();
 
 $dbs = array();
 
 foreach($MYMONGO as $db) {
-	$test = $mongo->init($db['hosts'],$db['user'],$db['password'],"",$db['replicaSet'],$db['ssl']);
-
-	$dbs[] = $db;
+	$test = new mymongo($db['hosts'],$db['user'],$db['password'],$db['name'],$db['replicaSet'],$db['ssl']);
+	$db['health'] = $test->health($db['replicaSet'],$db['adminCollection']);
+	$db['info'] = $test->info();
+	$dbs[$db['name']] = $db;
 }
 
 echo json_encode($dbs);

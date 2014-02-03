@@ -1,0 +1,16 @@
+{
+  "name": "mymongo",
+  "version": "0.0.0",
+  "dependencies": {
+    "jquery": "~1.10.1",
+    "angular": "~undefined",
+    "angular-mocks": "~undefined",
+    "angular-scenario": "~undefined",
+    "angular-sanitize": "~undefined"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ]
+}
