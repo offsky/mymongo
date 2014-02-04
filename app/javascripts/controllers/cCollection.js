@@ -42,6 +42,8 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 		$scope.collections = Database.getCollections($rootScope.selectedDB);
 		$scope.indexes = Database.getIndexes($rootScope.selectedDB,$rootScope.selectedCol);
 		
+		Database.getDocuments($rootScope.selectedDB,$rootScope.selectedCol);
+		
 		if($scope.collections && $scope.collections.length) {
 			for(var i = 0;i<$scope.collections.length;i++) {
 				if($scope.collections[i].name==$rootScope.selectedCol) $scope.collection = $scope.collections[i];

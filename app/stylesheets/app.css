@@ -2,6 +2,7 @@
 
 body { padding-top: 70px; }
 .dropdown-menu li a.selected { font-weight: bold;}
+h2 { margin-top:0px;}
 
 /* Collection */
 .vCollection li.selected { font-weight:bold;}
