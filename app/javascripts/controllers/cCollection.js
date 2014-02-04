@@ -7,6 +7,9 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 
 	$rootScope.selectedDB = "";
 	$rootScope.selectedCol = "";
+	$scope.db = null;
+	$scope.collections = null;
+	$scope.collection = null;
 
 	//==================================================================
 	// Called each time the view is loaded or reloaded
@@ -33,7 +36,17 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 
 	$scope.update = function() {
 		console.log("cCollection update");
+		$rootScope.pagetitle = $rootScope.selectedDB+" "+$rootScope.selectedCol;
+
+		$scope.db = Database.get($rootScope.selectedDB);
+		$scope.collections = Database.getCollections($rootScope.selectedDB);
+		$scope.indexes = Database.getIndexes($rootScope.selectedDB,$rootScope.selectedCol);
 		
+		if($scope.collections && $scope.collections.length) {
+			for(var i = 0;i<$scope.collections.length;i++) {
+				if($scope.collections[i].name==$rootScope.selectedCol) $scope.collection = $scope.collections[i];
+			}
+		}
 	}
 
 }]);

@@ -16,9 +16,9 @@ function findDB($name) {
 $db = findDB($_GET['db']);
 
 $m = new mymongo($db['hosts'],$db['user'],$db['password'],$db['name'],$db['replicaSet'],$db['ssl']);
-$collections = $m->listCollections();
+$m->changeTable($_GET['col']);
+$indexes = $m->listIndexes();
 
-
-echo json_encode($collections);
+echo json_encode($indexes);
 
 ?>

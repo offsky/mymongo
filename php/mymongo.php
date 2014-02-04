@@ -82,6 +82,9 @@ class mymongo {
 			global $mongoBypassConnect; //I can set this global flag to prevent mongo from connecting. Use this for testing what happens when mongo connection fails
 			if($mongoBypassConnect) return false;
 		}
+		
+		if(empty($host) || empty($user)) return; //cant connect without a host!
+
 		return $this->connect();
 	}
 
@@ -246,7 +249,7 @@ class mymongo {
 		}
 		return $result;
 	}
-	
+
 /* INSERT ================================================================================
 	Inserts an object into a table. 
 	Since object is passed by reference, it will return with the _id field set.
@@ -595,6 +598,34 @@ class mymongo {
 		return $result;
 	}
 
+
+	
+/* LISTINDEXES ============================================================================
+	Shows the indexes for this collection
+*/
+	public function listIndexes() {
+		$start = microtime(true);
+		
+		if($this->db==null) return null; //we never got connected
+		
+		$collection = $this->db->selectCollection($this->MyTable);
+		
+		try {
+			$result = $collection->getIndexInfo();
+		
+		} catch(MongoException $e) {
+			$this->log_db_error("listIndexes",$this->MyTable,$e->getMessage(),$e->getCode());
+			return null;
+		} 
+		
+		$this->performance($start,"listIndexes");
+	
+		return $result;
+	}
+	
+
+	
+
 /* ensureIndex =========================================================================
 	Creates an index on the collection
 */
@@ -812,10 +843,25 @@ class mymongo {
 		return 0;
 	}
 	
-	/* INFO ============================================================================
+
+	/* CLIENTINFO ============================================================================
+		Returns diagnostic information about a php mongo driver
+	*/	
+	public function client_info() {
+		$driver = Mongo::VERSION;
+		$ping = ini_get("mongo.ping_interval");
+	
+		//$connections = $m->getConnections();		
+		//$hosts = $m->getHosts();
+
+		return array("driver"=>$driver,"ping"=>$ping);
+	}
+	
+
+	/* DBINFO ============================================================================
 		Returns diagnostic information about a database
 	*/	
-	public function info() {
+	public function db_info() {
 		$result = null;
 		if($this->db) {
 			try {

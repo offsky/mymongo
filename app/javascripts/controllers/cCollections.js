@@ -12,7 +12,7 @@ angular.module('phpMongoAdmin').controller('cCollections', ['$scope', '$rootScop
 	//==================================================================
 	// Called each time the view is loaded or reloaded
 	$scope.init = function() {
-		console.log("Collection Init");
+		console.log("Collections Init");
 		
 		$rootScope.selectedDB = $routeParams.name;
 
@@ -32,7 +32,7 @@ angular.module('phpMongoAdmin').controller('cCollections', ['$scope', '$rootScop
 
 
 	$scope.update = function() {
-		console.log("cCollection update");
+		console.log("cCollections update");
 		$rootScope.pagetitle = $rootScope.selectedDB;
 
 		$scope.db = Database.get($rootScope.selectedDB);

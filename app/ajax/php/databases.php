@@ -8,7 +8,7 @@ foreach($MYMONGO as $db) {
 	$test = new mymongo($db['hosts'],$db['user'],$db['password'],$db['name'],$db['replicaSet'],$db['ssl']);
 	$db['health'] = $test->health($db['replicaSet'],$db['adminCollection']);
 	
-	$info = $test->info();
+	$info = $test->db_info();
 	$db['info'] = $info[0];
 	$db['stats'] = $info[1];
 	

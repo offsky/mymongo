@@ -3,4 +3,5 @@
 body { padding-top: 70px; }
 .dropdown-menu li a.selected { font-weight: bold;}
 
-/*  */
+/* Collection */
+.vCollection li.selected { font-weight:bold;}
