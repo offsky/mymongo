@@ -1,6 +1,6 @@
 <div class="container" ng-init="init()" >
 
-<table class="table table-striped table-bordered table-hover">
+<table class="table table-striped table-bordered table-hover greyth">
 	<thead><tr>
 		<th>Name</th>
 		<th>Collections</th>
@@ -12,9 +12,9 @@
 	<tbody>
 	<tr ng-repeat="db in databases">
 		<td><a href="#/db/{{db.name}}">{{db.name}}</a></td>
-		<td>{{db.stats.collections}}</td>
-		<td>{{db.stats.objects}}</td>
-		<td>{{db.stats.fileSize}}</td>
+		<td>{{db.stats.collections | number}}</td>
+		<td>{{db.stats.objects | number}}</td>
+		<td>{{db.stats.fileSize | bytes:1}}</td>
 		<td>{{db.health}}</td>
 		<td>{{db.info.version}}</td>
 	</tr>

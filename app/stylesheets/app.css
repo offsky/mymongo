@@ -1,26 +1,10 @@
-/* Navbar */
 html,body{
     height: 100%; /* needed for sticky footer */
 }
 body { padding-top: 70px; }
-.dropdown-menu li a.selected { font-weight: bold;}
 h2, h3 { margin-top:0px;}
+.small { font-size:.85em;}
 
-.doctable {  table-layout:fixed; }
-.doctable tr, .doctable td {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-
-/* Collection */
-.vCollection li.selected { font-weight:bold;}
-.container { max-width: none; margin-right:20px;}
-
-
-
-
-/* Footer */
 #everything {
 	min-height: 100%;
 	height: auto !important;
@@ -29,11 +13,33 @@ h2, h3 { margin-top:0px;}
  	padding: 0 0 50px;
 }
 
-
 #app { 
 	overflow:auto;
   	padding-bottom:50px; /* this needs to be bigger than footer height*/
 }
+
+.greyth th { background-color: #eee; border-color:#ddd;}
+
+/* Navbar */
+.dropdown-menu li a.selected { font-weight: bold;}
+
+/* Sidebar */
+.sidebar .badge { font-weight: normal;}
+
+/* Collection */
+.container { max-width: none; margin-right:20px;}
+
+.doctable {  table-layout:fixed; }
+.doctable tr, .doctable td {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.pagination li {
+	cursor: pointer;	
+}
+/* Footer */
 
 #footer {
 	border-top: 1px solid black;

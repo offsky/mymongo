@@ -92,12 +92,14 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 
 	//==================================================================
 	// Gets documents for this db and collection
-	function getDocuments(name,collection,$query,$fields,$sort,$skip,$num) {
-		console.log("getDocuments",name,collection);
+	function getDocuments(name,collection,query,fields,sort,page,num) {
+		page--; //1 indexed to 0 indexed conversion
+		
+		console.log("getDocuments",name,collection,query,fields,sort,page,num);
 
 		$rootScope.documents = [];
 		
-		$http.get(apiPath + '/documents.php?db='+name+'&col='+collection)
+		$http.get(apiPath + '/documents.php?db='+name+'&col='+collection+'&query='+query+'&fields='+fields+'&sort='+sort+'&page='+page+'&num='+num)
 			.success(function(data) {
 				$rootScope.documents = data;
 				console.log("docs Got");

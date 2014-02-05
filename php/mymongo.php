@@ -446,8 +446,37 @@ class mymongo {
 		
 		return $count;
 	}
+
+/* SKIP ==================================================================================
+	SKips the number of specified rows on the cursor
+	returns true/false on success
+*/
+	public function skip($cursor,$skip) {
+		if(empty($cursor)) return false;
+		$skip = intval($skip);
+		if(empty($skip)) return true;
+
+		try {
+			$cursor->skip($skip);
+		} catch(MongoCursorException $e) {
+			$info = $this->serializeQuery($cursor->info());		
+			$this->log_db_error("SKIP1",$this->MyTable,$e->getMessage(),$e->getCode(),$info);
+			return false;
+		} catch(MongoCursorTimeoutException $e) {
+			$info = $this->serializeQuery($cursor->info());
+			$this->log_db_error("SKIP2",$this->MyTable,$e->getMessage(),$e->getCode(),$info);
+			return false;
+		} catch(MongoException $e) {
+			$info = $this->serializeQuery($cursor->info());
+			$this->log_db_error("SKIP3",$this->MyTable,$e->getMessage(),$e->getCode(),$info);
+			return false;
+		}
 		
-	/* GETNEXT ==================================================================================
+		return true;
+	}
+
+		
+/* GETNEXT ==================================================================================
 	Returns the next row on a cursor which may be null if there is no next row. This is a simple wrapper to catch exceptions.
 	returns -1 on exception
 */
