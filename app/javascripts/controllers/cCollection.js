@@ -11,6 +11,10 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 	$scope.collections = null;
 	$scope.collection = null;
 
+	$scope.page = 1;
+	$scope.pageSize = 50; //records per page
+	$scope.maxSize = 20; //number of pages to show in page bar
+
 	//==================================================================
 	// Called each time the view is loaded or reloaded
 	$scope.init = function() {
@@ -26,30 +30,44 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 	// Listens for broadcass that a db was updated and refreshes the list
 	$rootScope.$on('update_databases', function() {
 		console.log("update_databases");
-		$scope.update();
+		$scope.db = Database.get($rootScope.selectedDB);
 	});
 	$rootScope.$on('update_collections', function() {
 		console.log("update_collections");
-		$scope.update();
+		$scope.collections = Database.getCollections($rootScope.selectedDB);
+		if($scope.collections && $scope.collections.length) {
+			for(var i = 0;i<$scope.collections.length;i++) {
+				if($scope.collections[i].name==$rootScope.selectedCol) $scope.collection = $scope.collections[i];
+			}
+		}
 	});
-
+	$rootScope.$on('update_indexes', function() {
+		console.log("update_indexes");
+		$scope.indexes = Database.getIndexes($rootScope.selectedDB,$rootScope.selectedCol);
+	});
 
 	$scope.update = function() {
 		console.log("cCollection update");
 		$rootScope.pagetitle = $rootScope.selectedDB+" "+$rootScope.selectedCol;
 
 		$scope.db = Database.get($rootScope.selectedDB);
+		
 		$scope.collections = Database.getCollections($rootScope.selectedDB);
-		$scope.indexes = Database.getIndexes($rootScope.selectedDB,$rootScope.selectedCol);
-		
-		Database.getDocuments($rootScope.selectedDB,$rootScope.selectedCol);
-		
 		if($scope.collections && $scope.collections.length) {
 			for(var i = 0;i<$scope.collections.length;i++) {
 				if($scope.collections[i].name==$rootScope.selectedCol) $scope.collection = $scope.collections[i];
 			}
 		}
+
+		$scope.indexes = Database.getIndexes($rootScope.selectedDB,$rootScope.selectedCol);
+	
+		Database.getDocuments($rootScope.selectedDB,$rootScope.selectedCol);
 	}
 
+	$scope.selectPage = function(num) {
+		console.log("goto page ",num);
+		$scope.page = num;
+
+	}
 }]);
 

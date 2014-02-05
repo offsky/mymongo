@@ -1,8 +1,42 @@
 /* Navbar */
-
+html,body{
+    height: 100%; /* needed for sticky footer */
+}
 body { padding-top: 70px; }
 .dropdown-menu li a.selected { font-weight: bold;}
-h2 { margin-top:0px;}
+h2, h3 { margin-top:0px;}
+
+.doctable {  table-layout:fixed; }
+.doctable tr, .doctable td {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
 
 /* Collection */
 .vCollection li.selected { font-weight:bold;}
+.container { max-width: none; margin-right:20px;}
+
+
+
+
+/* Footer */
+#everything {
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	margin: 0 auto -50px; /* Negative indent by footer height */
+ 	padding: 0 0 50px;
+}
+
+
+#app { 
+	overflow:auto;
+  	padding-bottom:50px; /* this needs to be bigger than footer height*/
+}
+
+#footer {
+	border-top: 1px solid black;
+	text-align: center;
+	height: 50px;
+}

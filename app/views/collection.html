@@ -1,36 +1,48 @@
 <div class="container vCollection" ng-init="init()" ><div class="row">
 
 <div class="col-md-2">
-<a href="#/db/{{selectedDB}}">Info for {{ selectedDB }}</a>
-<hr />
-<b>Collections</b>
+<h3><a href="#/db/{{selectedDB}}">{{ selectedDB }}</a></h3>
 
-<ul>
-	<li ng-repeat="c in collections" ng-class="{selected:c.name==selectedCol}"><a href="#/db/{{selectedDB}}/{{c.name}}">{{c.name}}</a></li>
-</ul>
+	<table class="table table-striped table-bordered table-hover">
+		<tbody>
+			<tr><th>Objects</th><td class="text-right">{{db.stats.objects | number:0}}</td></tr>
+			<tr><th>Indexes</th><td class="text-right">{{db.stats.indexes | number:0}}</td></tr>
+			<tr><th>AvgObjSize</th><td class="text-right">{{db.stats.avgObjSize | number:1}} b</td></tr>
+			<tr><th>DataSize</th><td class="text-right">{{db.stats.dataSize/1024 | number:1}} kb</td></tr>
+			<tr><th>StorageSize</th><td class="text-right">{{db.stats.storageSize/1024 | number:1}} kb</td></tr>
+			<tr><th>IndexSize</th><td class="text-right">{{db.stats.indexSize/1024 | number:1}} kb</td></tr>
+			<tr><th>FileSize</th><td class="text-right">{{db.stats.fileSize/1024 | number:1}} kb</td></tr>
+		</tbody>
+	</table>
+
+	<b>Collections ({{db.stats.collections | number:0}})</b>
+
+	<ul>
+		<li ng-repeat="c in collections" ng-class="{selected:c.name==collection.name}"><a href="#/db/{{selectedDB}}/{{c.name}}">{{c.name}}</a></li>
+	</ul>
 
 </div>
 <div class="col-md-10">
-	<h2>{{ selectedDB }}.{{collection.name}}</h2>
+	<h3>{{collection.name}}</h3>
 	<table class="table table-striped table-bordered">
 		<thead>
 			<tr>
 				<th>Count</th>
-				<th>Size</th>
-				<th>AbvObjSize</th>
-				<th>StorageSize</th>
+				<th>Size (kb)</th>
+				<th>AbvObjSize (b)</th>
+				<th>StorageSize (kb)</th>
 				<th>Indexes</th>
-				<th>IndexSize</th>
+				<th>IndexSize (kb)</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr>
-				<td>{{collection.stats.count}}</td>
-				<td>{{collection.stats.size}}</td>
-				<td>{{collection.stats.avgObjSize}}</td>
-				<td>{{collection.stats.storageSize}}</td>
-				<td>{{collection.stats.nindexes}}</td>
-				<td>{{collection.stats.totalIndexSize}}</td>
+				<td>{{collection.stats.count | number}}</td>
+				<td>{{collection.stats.size/1024  | number:1}}</td>
+				<td>{{collection.stats.avgObjSize | number:1}}</td>
+				<td>{{collection.stats.storageSize/1024 | number:1}}</td>
+				<td>{{collection.stats.nindexes | number}}</td>
+				<td>{{collection.stats.totalIndexSize/1024 | number:1}}</td>
 			</tr>
 		</tbody>
 	</table>
@@ -46,6 +58,7 @@
 				<th>Safe</th>
 				<th>DropDupes</th>
 				<th>Sparse</th>
+				<th>Action</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -57,19 +70,49 @@
 				<td>{{index.safe}}</td>
 				<td>{{index.dropDups}}</td>
 				<td>{{index.sparse}}</td>
+				<td>
+					<button type="button" class="btn btn-danger btn-xs">
+ 	 				<span class="glyphicon glyphicon-remove"></span>
+					</button>
+				</td>
+			</tr>
+			<tr>
+				<td><input type="text" ng-model="i_name" /></td>
+				<td><input type="text" ng-model="i_index" /></td>
+				<td><input type="checkbox" ng-model="i_unique" /></td>
+				<td><input type="checkbox" ng-model="i_back" /></td>
+				<td><input type="checkbox" ng-model="i_safe" /></td>
+				<td><input type="checkbox" ng-model="i_drop" /></td>
+				<td><input type="checkbox" ng-model="i_sparse" /></td>
+				<td>
+					<button type="button" class="btn btn-success btn-xs">
+ 	 				<span class="glyphicon glyphicon-plus"></span>
+					</button>
+				</td>
 			</tr>
 		</tbody>
 	</table>
-	<br />
+	
 	<b>Documents</b>
-	<table class="table table-striped table-bordered table-hover">
+	<div class="input-group">
+      <input type="text" class="form-control">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button">Search</button>
+      </span>
+    </div>
+    <br />
+
+	<table class="table table-striped table-bordered table-hover doctable">
 		<tbody>
 			<tr ng-repeat="doc in documents">
 				<td>{{doc}}</td>
 			</tr>
 		</tbody>
 	</table>
-	<Br />
+	
+	<pagination total-items="collection.stats.count" page="page" max-size="maxSize" items-per-page="pageSize" class="pagination-sm" boundary-links="true" rotate="true" num-pages="numPages" on-select-page="selectPage(page)"></pagination>
+    <pre>Page: {{page}} / {{numPages}}</pre>
+
 
 </div>
 
