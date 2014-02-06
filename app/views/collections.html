@@ -8,7 +8,7 @@
 			<tr><th>User</th><td class="text-right">{{db.user}}</td></tr>
 			<tr><th>ReplicaSet</th><td class="text-right">{{db.replicaSet}}</td></tr>
 			<tr><th>SSL</th><td class="text-right">{{db.ssl}}</td></tr>
-			<tr><th>Server Version</th><td class="text-right">{{db.info.version}}</td></tr>
+			<tr><th>Server Version</th><td class="text-right"><a href="http://docs.mongodb.org/manual/" target="_new" ng-bind-html="db.info.version | nullspin"></a></td></tr>
 		</tbody>
 	</table>
 
@@ -16,11 +16,11 @@
 		<tbody>
 			<tr><th>Objects</th><td class="text-right">{{db.stats.objects | number:0}}</td></tr>
 			<tr><th>Indexes</th><td class="text-right">{{db.stats.indexes | number:0}}</td></tr>
-			<tr><th>AvgObjSize</th><td class="text-right">{{db.stats.avgObjSize | bytes:1}}</td></tr>
-			<tr><th>DataSize</th><td class="text-right">{{db.stats.dataSize | bytes:1}}</td></tr>
-			<tr><th>StorageSize</th><td class="text-right">{{db.stats.storageSize | bytes:1}}</td></tr>
-			<tr><th>IndexSize</th><td class="text-right">{{db.stats.indexSize | bytes:1}}</td></tr>
-			<tr><th>FileSize</th><td class="text-right">{{db.stats.fileSize | bytes:1}}</td></tr>
+			<tr><th><span class="hastip" tooltip="The average size of each document." tooltip-placement="right">AvgObjSize</span></th><td class="text-right" ng-bind-html="db.stats.avgObjSize | bytes:1"></td></tr>
+			<tr><th><span class="hastip" tooltip="The total size of the data held in this database including the padding factor." tooltip-placement="right">DataSize</span></th><td class="text-right" ng-bind-html="db.stats.dataSize | bytes:1"></td></tr>
+			<tr><th><span class="hastip" tooltip="The total amount of space allocated to collections in this database for document storage." tooltip-placement="right">StorageSize</span></th><td class="text-right" ng-bind-html="db.stats.storageSize | bytes:1"></td></tr>
+			<tr><th><span class="hastip" tooltip="The total size of all indexes created on this database." tooltip-placement="right">IndexSize</span></th><td class="text-right" ng-bind-html="db.stats.indexSize | bytes:1"></td></tr>
+			<tr><th><span class="hastip" tooltip="The total size of the data files that hold the database. This value includes preallocated space and the padding factor." tooltip-placement="right">FileSize</span></th><td class="text-right" ng-bind-html="db.stats.fileSize | bytes:1"></td></tr>
 		</tbody>
 	</table>
 </div>
@@ -29,7 +29,7 @@
 	<table class="table table-bordered table-hover greyth small table-condensed">
 		<tbody>
 			<tr><th>Host(s)</th><td colspan="3">{{db.hosts}}</td></tr>
-			<tr><th>SysInfo</th><td colspan="3">{{db.info.sysInfo}}</td></tr>
+			<tr><th>SysInfo</th><td colspan="3" ng-bind-html="db.info.sysInfo | nullspin"></td></tr>
 		</tbody>
 	</table>
 
@@ -39,16 +39,17 @@
 				<th>Collection</th>
 				<th class="text-right">Count</th>
 				<th class="text-right">Size</th>
-				<th class="text-right">AbvObjSize</th>
-				<th class="text-right">StorageSize</th>
+				<th class="text-right"><span class="hastip" tooltip="The average size of each document." tooltip-placement="bottom">AvgObjSize</span></th>
+				<th class="text-right"><span class="hastip" tooltip="The total amount of space allocated to this collection for document storage." tooltip-placement="bottom">StorageSize</span></th>
 				<th class="text-right">Indexes</th>
-				<th class="text-right">IndexSize</th>
+				<th class="text-right"><span class="hastip" tooltip="The total size of all indexes created on this collection." tooltip-placement="bottom">IndexSize</span></th>
 			</tr>
 		</thead>
 		<tbody>
+			<tr ng-show="collections==undefined || collections=={}"><td colspan="7"><i class='fa fa-spinner fa-spin'></i> Loading...</td></tr>
 			<tr ng-repeat="c in collections" class="text-right">
 				<td class="text-left"><a href="#/db/{{selectedDB}}/{{c.name}}">{{c.name}}</a></td>
-				<td >{{c.stats.count | number:0}}</td>
+				<td>{{c.stats.count | number:0}}</td>
 				<td>{{c.stats.size | bytes:1}}</td>
 				<td>{{c.stats.avgObjSize | bytes:1}}</td>
 				<td>{{c.stats.storageSize | bytes:1}}</td>

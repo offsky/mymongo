@@ -6,19 +6,18 @@
 		<th>Collections</th>
 		<th>Objects</th>
 		<th>Size</th>
-		<th>Health Errors</th>
 		<th>Version</th>
+		<th>Healthcheck</th>
 	</tr></thead>
 	<tbody>
 	<tr ng-repeat="db in databases">
 		<td><a href="#/db/{{db.name}}">{{db.name}}</a></td>
-		<td>{{db.stats.collections | number}}</td>
-		<td>{{db.stats.objects | number}}</td>
-		<td>{{db.stats.fileSize | bytes:1}}</td>
-		<td>{{db.health}}</td>
-		<td>{{db.info.version}}</td>
+		<td ng-bind-html="db.stats.collections | number"></td>
+		<td ng-bind-html="db.stats.objects | number"></td>
+		<td ng-bind-html="db.stats.fileSize | bytes:1"></td>
+		<td ng-bind-html="db.info.version | nullspin"></td>
+		<td ng-bind-html="db.health | healthDecode"></td>
 	</tr>
 	</tbody>
 </table>
-
 </div>

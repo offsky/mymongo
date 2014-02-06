@@ -19,6 +19,9 @@ h2, h3 { margin-top:0px;}
 }
 
 .greyth th { background-color: #eee; border-color:#ddd;}
+.fa-check-circle { color: #090;}
+.fa-exclamation-triangle { color: #900;}
+.hastip { border-bottom:1px black dotted; cursor:help;}
 
 /* Navbar */
 .dropdown-menu li a.selected { font-weight: bold;}

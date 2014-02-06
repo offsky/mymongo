@@ -23,16 +23,10 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 
 		console.log("mDatabase INIT");
 
-		$http.get(apiPath + '/databases.php')
-			.success(function(data) {
-				$rootScope.databases = data;
-				console.log("mDatabase INIT final");
-				// console.table(data);
-				$rootScope.$broadcast('update_databases');
-			})
-			.error(function(data) {
-				console.log("ERROR FETCHING mDatabase",data);
-			});
+		var promise = getDatabases(true);
+		promise.then(function() {
+			getDatabases(false);
+		})
 
 		$http.get(apiPath + '/client.php')
 			.success(function(data) {
@@ -45,6 +39,28 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 			});
 	};
 
+	//==================================================================
+	// Gets all the databases. If fast=true it doesn't do any verification
+	// If fast is false it will do a healthceck and gather statistics
+	function getDatabases(fast) {
+		
+		var query = "";
+		if(fast!=undefined && fast==true) query = "?fast=1";
+
+		var promise = $http.get(apiPath + '/databases.php'+query);
+		
+		promise.success(function(data) {
+			$rootScope.databases = data;
+			console.log("getDatabases callback",fast);
+			// console.table(data);
+			$rootScope.$broadcast('update_databases');
+		});
+		promise.error(function(data) {
+			console.log("ERROR getDatabases",fast,data);
+		});
+		return promise;
+	}
+	
 	//==================================================================
 	// Gets one db by name 
 	function get(dbname) {
@@ -137,7 +153,7 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 		
 		console.log("getDocuments",dbname,collection,query,fields,sort,page,num);
 
-		$rootScope.documents = [];
+		$rootScope.documents = null;
 		
 		$http.get(apiPath + '/documents.php?db='+dbname+'&col='+collection+'&query='+query+'&fields='+fields+'&sort='+sort+'&page='+page+'&num='+num)
 			.success(function(data) {
