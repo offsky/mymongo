@@ -687,7 +687,7 @@ class mymongo {
 	Creates an index on the collection
 	$index = array of keys with 1/-1 for direction Ex: array("c"=>1,"u"=>1,"k"=>1)
 */
-	public function ensureIndex($index,$unique=false) {
+	public function ensureIndex($index,$name=null,$unique=false) {
 		$start = microtime(true);
 		
 		if($this->db==null) return null; //we never got connected
@@ -695,16 +695,23 @@ class mymongo {
 		
 		$collection = $this->db->selectCollection($this->MyTable);
 		
+		$data = array("background"=>true,"safe"=>true,"w"=>1, "unique" => $unique);
+		if(!empty($name)) $data['name'] = $name;
+
 		try {
-			$success = $collection->ensureIndex($index, array("background"=>true,"safe"=>true,"w"=>1, "unique" => $unique));
+			$success = $collection->ensureIndex($index, $data);
+
 		} catch(MongoException $e) {
 			$this->log_db_error("ensureIndex",$this->MyTable,$e->getMessage(),$e->getCode());
 			return false;
 		}
 		
+		if(empty($success['ok'])) $success = false;
+		else $success = true;
+
 		$this->performance($start,"ensureIndex");
 		
-		return true;
+		return $success;
 	}
 
 /* deleteIndex =========================================================================
@@ -719,15 +726,17 @@ class mymongo {
 		$collection = $this->db->selectCollection($this->MyTable);
 		
 		try {
-			$success = $collection->deleteIndex($index);
+			$success = $this->db->command(array("deleteIndexes" => $collection->getName(), "index" => $index));
 		} catch(MongoException $e) {
 			$this->log_db_error("deleteIndex",$this->MyTable,$e->getMessage(),$e->getCode());
 			return false;
 		}
-		
+		if(empty($success['ok'])) $success = false;
+		else $success = true;
+
 		$this->performance($start,"deleteIndex");
 		
-		return true;
+		return $success;
 	}
 	
 /* DOCSIZE =========================================================================

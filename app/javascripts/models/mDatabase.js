@@ -2,6 +2,7 @@
 
 /* ==================================================================
 
+TODO: may need to encodeURIComponent the db/collection names
 -----------------------------------------------------------------*/
 
 angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase', ['$http', '$rootScope', function($http, $rootScope) {
@@ -45,22 +46,22 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 
 	//==================================================================
 	// Gets one db by name 
-	function get(name) {
-		console.log("get db",name,$rootScope.databases);
-		return $rootScope.databases[name];
+	function get(dbname) {
+		console.log("get db",dbname,$rootScope.databases);
+		return $rootScope.databases[dbname];
 	};
 
 	//==================================================================
 	// Gets collections for this db 
-	function getCollections(name) {
-		console.log("getCollections",name,$rootScope.databases);
+	function getCollections(dbname) {
+		console.log("getCollections",dbname,$rootScope.databases);
 
-		if($rootScope.allCollections[name]!=undefined) return $rootScope.allCollections[name];
+		if($rootScope.allCollections[dbname]!=undefined) return $rootScope.allCollections[dbname];
 
-		$http.get(apiPath + '/collections.php?db='+name)
+		$http.get(apiPath + '/collections.php?db='+dbname)
 			.success(function(data) {
-				$rootScope.allCollections[name] = data;
-				$rootScope.allIndexes[name] = {};
+				$rootScope.allCollections[dbname] = data;
+				$rootScope.allIndexes[dbname] = {};
 				console.log("Collections Got");
 //				console.log(data);
 				$rootScope.$broadcast('update_collections');
@@ -72,15 +73,15 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 
 	//==================================================================
 	// Gets indexes for this db and collection
-	function getIndexes(name,collection) {
-		console.log("getIndexes",name,collection);
+	function getIndexes(dbname,collection) {
+		console.log("getIndexes",dbname,collection);
 
-		if($rootScope.allIndexes[name]!=undefined && $rootScope.allIndexes[name][collection]!=undefined) return $rootScope.allIndexes[name][collection];
+		if($rootScope.allIndexes[dbname]!=undefined && $rootScope.allIndexes[dbname][collection]!=undefined) return $rootScope.allIndexes[dbname][collection];
 
-		$http.get(apiPath + '/indexes.php?db='+name+'&col='+collection)
+		$http.get(apiPath + '/indexes.php?db='+dbname+'&col='+collection)
 			.success(function(data) {
-				if($rootScope.allIndexes[name]==undefined) $rootScope.allIndexes[name]={};
-				$rootScope.allIndexes[name][collection] = data;
+				if($rootScope.allIndexes[dbname]==undefined) $rootScope.allIndexes[dbname]={};
+				$rootScope.allIndexes[dbname][collection] = data;
 				console.log("Indexes Got");
 				console.log(data);
 				$rootScope.$broadcast('update_indexes');
@@ -91,15 +92,53 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 	};
 
 	//==================================================================
+	// Adds one index
+	function addIndex(dbname,collection,name,index) {
+		if(!index) return;
+		
+		console.log("addIndex",dbname,collection,name,index);
+
+		$http.post(apiPath + '/index_add.php','db='+dbname+'&col='+collection+'&name='+name+'&index='+index, {'headers': {'Content-Type': 'application/x-www-form-urlencoded'}})
+			.success(function(data) {
+				console.log("added indexes",data);
+
+				$rootScope.allIndexes[dbname]=undefined;
+				getIndexes(dbname,collection);
+			})
+			.error(function(data) {
+				console.log("ERROR FETCHING indexes",data);
+			});
+	};
+
+	//==================================================================
+	// Deletes one index
+	function deleteIndex(dbname,collection,index) {
+		if(!index) return;
+
+		console.log("deleteIndexes",dbname,collection,index);
+
+		$http.post(apiPath + '/index_remove.php','db='+dbname+'&col='+collection+'&index='+index, {'headers': {'Content-Type': 'application/x-www-form-urlencoded'}})
+			.success(function(data) {
+				console.log("deleted indexes",data);
+
+				$rootScope.allIndexes[dbname]=undefined;
+				getIndexes(dbname,collection);
+			})
+			.error(function(data) {
+				console.log("ERROR deleting indexes",data);
+			});
+	};
+
+	//==================================================================
 	// Gets documents for this db and collection
-	function getDocuments(name,collection,query,fields,sort,page,num) {
+	function getDocuments(dbname,collection,query,fields,sort,page,num) {
 		page--; //1 indexed to 0 indexed conversion
 		
-		console.log("getDocuments",name,collection,query,fields,sort,page,num);
+		console.log("getDocuments",dbname,collection,query,fields,sort,page,num);
 
 		$rootScope.documents = [];
 		
-		$http.get(apiPath + '/documents.php?db='+name+'&col='+collection+'&query='+query+'&fields='+fields+'&sort='+sort+'&page='+page+'&num='+num)
+		$http.get(apiPath + '/documents.php?db='+dbname+'&col='+collection+'&query='+query+'&fields='+fields+'&sort='+sort+'&page='+page+'&num='+num)
 			.success(function(data) {
 				$rootScope.documents = data;
 				console.log("docs Got");
@@ -111,7 +150,27 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 			});
 	};
 
+	//==================================================================
+	// Gets one document
+	function getDocument(dbname,collection,id) {
+		
+		console.log("getDocument",dbname,collection,id);
+
+		$rootScope.document = {};
+		
+		$http.get(apiPath + '/document.php?db='+dbname+'&col='+collection+'&id='+id)
+			.success(function(data) {
+				$rootScope.document = data;
+				console.log("doc Got");
+				console.log(data);
+				$rootScope.$broadcast('update_doc');
+			})
+			.error(function(data) {
+				console.log("ERROR FETCHING doc",data);
+			});
+	};
+
 	return {
-		init: init, get: get, getCollections:getCollections, getIndexes:getIndexes, getDocuments:getDocuments
+		init: init, get: get, getCollections:getCollections, getIndexes:getIndexes, deleteIndex:deleteIndex, addIndex:addIndex, getDocuments:getDocuments, getDocument:getDocument
 	};
 }]); //end factory and module

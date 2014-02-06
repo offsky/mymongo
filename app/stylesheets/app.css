@@ -39,6 +39,14 @@ h2, h3 { margin-top:0px;}
 .pagination li {
 	cursor: pointer;	
 }
+/* Document */
+
+.string { color: green; }
+.number { color: darkorange; }
+.boolean { color: blue; }
+.null { color: magenta; }
+.key { color: red; }
+
 /* Footer */
 
 #footer {

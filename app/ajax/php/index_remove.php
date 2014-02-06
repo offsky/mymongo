@@ -4,12 +4,12 @@ require_once("../../../php/config.php");
 require_once("_helpers.php");
 
 
-$db = findDB($_GET['db']);
+$db = findDB($_POST['db']);
 
 $m = new mymongo($db['hosts'],$db['user'],$db['password'],$db['name'],$db['replicaSet'],$db['ssl']);
-$m->changeTable($_GET['col']);
+$m->changeTable($_POST['col']);
 
 //remove index
-$m->deleteIndex();
-
+$res = $m->deleteIndex($_POST['index']);
+if($res) echo 1; else echo 0;
 ?>

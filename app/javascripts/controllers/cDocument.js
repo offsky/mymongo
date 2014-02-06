@@ -3,7 +3,7 @@
 The controller for the top navigation. Also initializes the models
 -----------------------------------------------------------------*/
 
-angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope', '$routeParams', 'phpMongoAdmin.mDatabase', function($scope, $rootScope, $routeParams, Database) {
+angular.module('phpMongoAdmin').controller('cDocument', ['$scope', '$rootScope', 'phpMongoAdmin.mDatabase', function($scope, $rootScope, Database) {
 
 	$rootScope.selectedDB = "";
 	$rootScope.selectedCol = "";
@@ -11,26 +11,17 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 	$scope.collections = null;
 	$scope.collection = null;
 
-	$scope.page = 1;
-	$scope.pageSizeOptions = [{name:'10'},{name:'50'},{name:'100'}];
-	$scope.pageSize = $scope.pageSizeOptions[1]; //records per page
-
-	$scope.maxSize = 20; //number of pages to show in page bar
-
-	$scope.query = "";
-	$scope.fields = "";
-	$scope.sort = "";
-
 	//==================================================================
 	// Called each time the view is loaded or reloaded
 	$scope.init = function() {
-		console.log("Collection Init");
+		console.log("Document Init");
 		
 		$rootScope.selectedDB = $routeParams.name;
 		$rootScope.selectedCol = $routeParams.collection;
 
 		$scope.update();
 	};
+
 
 	//==================================================================
 	// Listens for broadcass that a db was updated and refreshes the list
@@ -50,13 +41,10 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 	$rootScope.$on('update_indexes', function() {
 		console.log("update_indexes");
 		$scope.indexes = Database.getIndexes($rootScope.selectedDB,$rootScope.selectedCol);
-		
-		$scope.i_name = "";
-		$scope.i_index = "";
 	});
 
 	$scope.update = function() {
-		console.log("cCollection update");
+		console.log("cDocument update");
 		$rootScope.pagetitle = $rootScope.selectedDB+" "+$rootScope.selectedCol;
 
 		$scope.db = Database.get($rootScope.selectedDB);
@@ -71,28 +59,7 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 		$scope.indexes = Database.getIndexes($rootScope.selectedDB,$rootScope.selectedCol);
 	
 		Database.getDocuments($rootScope.selectedDB,$rootScope.selectedCol,$scope.query,$scope.fields,$scope.sort,$scope.page,$scope.pageSize.name);
-	};
-
-	$scope.selectPage = function(num) {
-		console.log("goto page ",num);
-		$scope.page = num;
-
-		Database.getDocuments($rootScope.selectedDB,$rootScope.selectedCol,$scope.query,$scope.fields,$scope.sort,$scope.page,$scope.pageSize.name);
-	};
-
-	$scope.search = function() {
-		console.log("search",$scope.query);
-
-		Database.getDocuments($rootScope.selectedDB,$rootScope.selectedCol,$scope.query,$scope.fields,$scope.sort,$scope.page,$scope.pageSize.name);
-	};
-
-	$scope.deleteIndex = function(index) {
-		Database.deleteIndex($rootScope.selectedDB,$rootScope.selectedCol,index);
-	};
-
-	$scope.addIndex = function(index) {
-		Database.addIndex($rootScope.selectedDB,$rootScope.selectedCol,$scope.i_name,$scope.i_index);		
-	};
+	}
 
 }]);
 
