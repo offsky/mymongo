@@ -3,10 +3,11 @@
 The controller for the top navigation. Also initializes the models
 -----------------------------------------------------------------*/
 
-angular.module('phpMongoAdmin').controller('cDocument', ['$scope', '$rootScope', 'phpMongoAdmin.mDatabase', function($scope, $rootScope, Database) {
+angular.module('phpMongoAdmin').controller('cDocument', ['$scope', '$rootScope', '$routeParams', 'phpMongoAdmin.mDatabase', function($scope, $rootScope, $routeParams, Database) {
 
 	$rootScope.selectedDB = "";
 	$rootScope.selectedCol = "";
+	$rootScope.selectedDoc = "";
 	$scope.db = null;
 	$scope.collections = null;
 	$scope.collection = null;
@@ -18,6 +19,7 @@ angular.module('phpMongoAdmin').controller('cDocument', ['$scope', '$rootScope',
 		
 		$rootScope.selectedDB = $routeParams.name;
 		$rootScope.selectedCol = $routeParams.collection;
+		$rootScope.selectedDoc = $routeParams.doc;
 
 		$scope.update();
 	};

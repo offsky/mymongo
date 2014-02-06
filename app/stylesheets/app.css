@@ -40,12 +40,12 @@ h2, h3 { margin-top:0px;}
 	cursor: pointer;	
 }
 /* Document */
-
-.string { color: green; }
-.number { color: darkorange; }
-.boolean { color: blue; }
-.null { color: magenta; }
-.key { color: red; }
+td.json { color:#999; }
+.string { color: #1e796e; }
+.number { color: #900; }
+.boolean { color: #268bd2; }
+.null { color: #268bd2; }
+.key { color: #333; }
 
 /* Footer */
 
