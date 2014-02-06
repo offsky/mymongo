@@ -420,6 +420,34 @@ class mymongo {
 		return $cursor;
 	}
 
+/* EXPLAIN ==================================================================================
+	Returns information about the query on the passed cursor.  Includes the index, number or records
+	matched and scanned. Also query time.
+*/
+
+	public function explain($cursor) {
+		$start = microtime(true);
+		if($this->db==null) return null; //we never got connected
+		if($cursor==null) return null;
+		
+		try {
+			$explain = $cursor->explain();
+		} catch(MongoException $e) {
+			$this->log_db_error("EXPLAIN",$this->MyTable,$e->getMessage(),$e->getCode(),"");
+			$this->performance($start,"EXPLAIN",$query,false);
+			return null;
+		}
+
+		if(empty($explain)) return null;
+				
+		if($explain['cursor']=="BasicCursor") $indexUsed = "None";
+		else $indexUsed = $explain['cursor'];
+
+		$info = array("index"=>$indexUsed,"matches"=>$explain['n'],"scanned"=>$explain['nscannedAllPlans'],"time"=>$explain['millis']);
+
+		return $info;
+	}
+	
 /* COUNT ==================================================================================
 	Counts the number of records matching the query. Returns an integer
 	Can pass a limit of the number to count before stopping
@@ -615,7 +643,7 @@ class mymongo {
 				);
 			if(!empty($query)) $command['query'] = $query;
 						
-			$result = $this->db->command($command); 
+			$result = $this->db->command($command,array("timeout"=>30000)); 
 	
 		} catch(MongoException $e) {
 			$this->log_db_error("MAPREDUCE",$this->MyTable,$e->getMessage(),$e->getCode(),$this->MyTable);
@@ -657,23 +685,47 @@ class mymongo {
 
 /* ensureIndex =========================================================================
 	Creates an index on the collection
+	$index = array of keys with 1/-1 for direction Ex: array("c"=>1,"u"=>1,"k"=>1)
 */
 	public function ensureIndex($index,$unique=false) {
 		$start = microtime(true);
 		
 		if($this->db==null) return null; //we never got connected
+		if(empty($index)) return null;
 		
 		$collection = $this->db->selectCollection($this->MyTable);
 		
 		try {
-			$success = $collection->ensureIndex($index, array("background"=>true,"safe"=>true,"unique" => $unique));
-		
+			$success = $collection->ensureIndex($index, array("background"=>true,"safe"=>true,"w"=>1, "unique" => $unique));
 		} catch(MongoException $e) {
 			$this->log_db_error("ensureIndex",$this->MyTable,$e->getMessage(),$e->getCode());
 			return false;
-		} 
+		}
 		
 		$this->performance($start,"ensureIndex");
+		
+		return true;
+	}
+
+/* deleteIndex =========================================================================
+	Deletes the named index
+*/
+	public function deleteIndex($index) {
+		$start = microtime(true);
+		
+		if($this->db==null) return null; //we never got connected
+		if(empty($index)) return null;
+		
+		$collection = $this->db->selectCollection($this->MyTable);
+		
+		try {
+			$success = $collection->deleteIndex($index);
+		} catch(MongoException $e) {
+			$this->log_db_error("deleteIndex",$this->MyTable,$e->getMessage(),$e->getCode());
+			return false;
+		}
+		
+		$this->performance($start,"deleteIndex");
 		
 		return true;
 	}

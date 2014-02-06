@@ -1,17 +1,7 @@
 <?php
 
 require_once("../../../php/config.php");
-
-$collections = null;
-
-function findDB($name) {
-	global $MYMONGO;
-	foreach($MYMONGO as $db) {
-		if($db['name']==$name) {
-			return $db;
-		}
-	}
-}
+require_once("_helpers.php");
 
 $db = findDB($_GET['db']);
 
