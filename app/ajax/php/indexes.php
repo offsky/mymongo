@@ -1,6 +1,6 @@
 <?php
 
-require_once("../../../php/config.php");
+require_once("../../../php/init.php");
 require_once("_helpers.php");
 
 $db = findDB($_GET['db']);

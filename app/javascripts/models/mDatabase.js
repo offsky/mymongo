@@ -9,7 +9,7 @@ TODO: may need to encodeURIComponent the db/collection names
 angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase', ['$http', '$rootScope', function($http, $rootScope) {
 
 	$rootScope.client = {}; //The last copy of the client info
-	$rootScope.databases = {}; //The last copy of the list of databases and info
+	$rootScope.databases = null; //The last copy of the list of databases and info
 	$rootScope.allCollections = {}; //The collections for the various databases
 	$rootScope.allIndexes = []; //The collections for the various databases
 	$rootScope.documents = []; // the array of documents that we are currently viewing
@@ -19,7 +19,7 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 	//==================================================================
 	// Initialize the database array from the server
 	function init() {
-		if($rootScope.databases.length) return; //already initialized
+		if($rootScope.databases && $rootScope.databases.length) return; //already initialized
 
 		console.log("mDatabase INIT");
 

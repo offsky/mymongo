@@ -935,9 +935,13 @@ class mymongo {
 	
 
 	/* CLIENTINFO ============================================================================
-		Returns diagnostic information about a php mongo driver
+		Returns diagnostic information about a php mongo driver.  If PHP is not installed, returns 0;
 	*/	
 	public function client_info() {
+		if(!class_exists('Mongo')) {
+			return 0;
+		}
+
 		$driver = Mongo::VERSION;
 		$ping = ini_get("mongo.ping_interval");
 	

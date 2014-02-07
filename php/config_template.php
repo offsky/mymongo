@@ -1,5 +1,4 @@
 <?php
-	error_reporting(E_ALL);
 
 	//This is a template. Put in your credentials and rename this file to config.php
 
@@ -25,10 +24,5 @@
  
 	$lib_dir = "/Users/jake/Sites/mymongo/php/"; //put your path here
 
-	//auto class loader.  When you use an unloaded class, it will automatically try to find it in libs/$class.php
-	spl_autoload_register(function ($class) {
-	    global $lib_dir;
-	    include $lib_dir.strtolower($class).'.php';
-	});
 
 ?>

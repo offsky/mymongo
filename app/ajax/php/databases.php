@@ -1,6 +1,6 @@
 <?php
 
-require_once("../../../php/config.php");
+require_once("../../../php/init.php");
 
 $dbs = array();
 
