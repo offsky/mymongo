@@ -16,10 +16,12 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 	$scope.pageSize = $scope.pageSizeOptions[1]; //records per page
 
 	$scope.maxSize = 20; //number of pages to show in page bar
+	$scope.tab = 0;
 
 	$scope.query = "";
 	$scope.fields = "";
 	$scope.sort = "";
+
 
 	//==================================================================
 	// Called each time the view is loaded or reloaded

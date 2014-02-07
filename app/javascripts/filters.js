@@ -6,8 +6,8 @@ angular.module('phpMongoAdmin.filters', [])
 
 //Displays bytes prettily 
 .filter('bytes', function() {
-	return function(bytes, precision) {
-		if(bytes==null || bytes==undefined) return "<i class='fa fa-spinner fa-spin'></i>";
+	return function(bytes, precision, nospinner) {
+		if (!nospinner && (bytes==null || bytes==undefined)) return "<i class='fa fa-spinner fa-spin'></i>";
 		if (bytes==0 || isNaN(parseFloat(bytes)) || !isFinite(bytes)) return '-';
 		if (typeof precision === 'undefined') precision = 1;
 		var units = ['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'],

@@ -9,77 +9,88 @@
 	<span ng-show="db.stats.collections!=undefined">{{db.stats.collections | number:0}} Collections</span>
 </div>
 <div class="col-md-10">
+
+	<ul class="nav nav-pills pull-right">
+		<li ng-class="{active:tab==0}"><a ng-click="tab=0">Documents</a></li>
+		<li ng-class="{active:tab==1}"><a ng-click="tab=1">Indexes</a></li>
+		<li ng-class="{active:tab==2}"><a ng-click="tab=2">Stats</a></li>
+	</ul>
 	<h3>{{collection.name}}</h3>
+	<br class="clearfix"/>
 
-	<table class="table table-striped table-bordered greyth small table-condensed">
-		<thead>
-			<tr>
-				<th>Count</th>
-				<th>Size</th>
-				<th><span class="hastip" tooltip="The average size of each document." tooltip-placement="right">AvgObjSize</span></th>
-				<th><span class="hastip" tooltip="The total amount of space allocated to this collection for document storage." tooltip-placement="bottom">StorageSize</span></th>
-				<th>Indexes</th>
-				<th><span class="hastip" tooltip="The total size of all indexes created on this collection." tooltip-placement="bottom">IndexSize</span></th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td>{{collection.stats.count | number}}</td>
-				<td ng-bind-html="collection.stats.size  | bytes:1"></td>
-				<td ng-bind-html="collection.stats.avgObjSize | bytes:1"></td>
-				<td ng-bind-html="collection.stats.storageSize | bytes:1"></td>
-				<td>{{collection.stats.nindexes | number}}</td>
-				<td ng-bind-html="collection.stats.totalIndexSize | bytes:1"></td>
-			</tr>
-		</tbody>
-	</table>
-
-	<b>Indexes</b>
-	<table class="table table-striped table-bordered greyth small table-condensed">
-		<thead>
-			<tr>
-				<th>Name</th>
-				<th>Index</th>
-				<th>Unique</th>
-				<th>Background</th>
-				<th>Safe</th>
-				<th>DropDupes</th>
-				<th>Sparse</th>
-				<th>Action</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr ng-show="indexes==undefined || indexes=={}"><td colspan="8"><i class='fa fa-spinner fa-spin'></i> Loading...</td></tr>
-			<tr ng-repeat="index in indexes">
-				<td>{{index.name}}</td>
-				<td>{{index.key}}</td>
-				<td>{{index.unique}}</td>
-				<td>{{index.background}}</td>
-				<td>{{index.safe}}</td>
-				<td>{{index.dropDups}}</td>
-				<td>{{index.sparse}}</td>
-				<td class="text-center">
-					<button type="button" class="btn btn-danger btn-xs" ng-click="deleteIndex(index.name)">
-					<span class="glyphicon glyphicon-remove"></span>
-					</button>
-				</td>
-			</tr>
-			<tr ng-hide="indexes==undefined || indexes=={}">
-				<td><input type="text" class="form-control input-sm" ng-model="i_name" placeholder="Optional Name" /></td>
-				<td><input type="text" class="form-control input-sm" ng-model="i_index" placeholder='Index JSON'/></td>
-				<td><input type="checkbox" ng-model="i_unique" /></td>
-				<td><input type="checkbox" ng-model="i_back" /></td>
-				<td><input type="checkbox" ng-model="i_safe" /></td>
-				<td><input type="checkbox" ng-model="i_drop" /></td>
-				<td><input type="checkbox" ng-model="i_sparse" /></td>
-				<td class="text-center">
-					<button type="button" class="btn btn-success btn-xs" ng-click="addIndex()">
-					<span class="glyphicon glyphicon-plus"></span>
-					</button>
-				</td>
-			</tr>
-		</tbody>
-	</table>
+	<div ng-show="tab==2" class="panel panel-primary">
+		<div class="panel-heading"><b>Stats</b></div>
+		<table ng-show="tab==2" class="table table-striped table-bordered greyth small table-condensed">
+			<thead>
+				<tr>
+					<th>Count</th>
+					<th>Size</th>
+					<th><span class="hastip" tooltip="The average size of each document." tooltip-placement="right">AvgObjSize</span></th>
+					<th><span class="hastip" tooltip="The total amount of space allocated to this collection for document storage." tooltip-placement="bottom">StorageSize</span></th>
+					<th>Indexes</th>
+					<th><span class="hastip" tooltip="The total size of all indexes created on this collection." tooltip-placement="bottom">IndexSize</span></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>{{collection.stats.count | number}}</td>
+					<td ng-bind-html="collection.stats.size  | bytes:1"></td>
+					<td ng-bind-html="collection.stats.avgObjSize | bytes:1"></td>
+					<td ng-bind-html="collection.stats.storageSize | bytes:1"></td>
+					<td>{{collection.stats.nindexes | number}}</td>
+					<td ng-bind-html="collection.stats.totalIndexSize | bytes:1"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div ng-show="tab==1" class="panel panel-primary">
+		<div class="panel-heading"><b>Indexes</b></div>
+		<table class="table table-striped table-bordered greyth small table-condensed">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Index</th>
+					<th>Unique</th>
+					<th>Background</th>
+					<th>Safe</th>
+					<th>DropDupes</th>
+					<th>Sparse</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-show="indexes==undefined || indexes=={}"><td colspan="8"><i class='fa fa-spinner fa-spin'></i> Loading...</td></tr>
+				<tr ng-repeat="index in indexes">
+					<td>{{index.name}}</td>
+					<td>{{index.key}}</td>
+					<td>{{index.unique}}</td>
+					<td>{{index.background}}</td>
+					<td>{{index.safe}}</td>
+					<td>{{index.dropDups}}</td>
+					<td>{{index.sparse}}</td>
+					<td class="text-center">
+						<button type="button" class="btn btn-danger btn-xs" ng-click="deleteIndex(index.name)">
+						<span class="glyphicon glyphicon-remove"></span>
+						</button>
+					</td>
+				</tr>
+				<tr ng-hide="indexes==undefined || indexes=={}">
+					<td><input type="text" class="form-control input-sm" ng-model="i_name" placeholder="Optional Name" /></td>
+					<td><input type="text" class="form-control input-sm" ng-model="i_index" placeholder='Index JSON'/></td>
+					<td><input type="checkbox" ng-model="i_unique" /></td>
+					<td><input type="checkbox" ng-model="i_back" /></td>
+					<td><input type="checkbox" ng-model="i_safe" /></td>
+					<td><input type="checkbox" ng-model="i_drop" /></td>
+					<td><input type="checkbox" ng-model="i_sparse" /></td>
+					<td class="text-center">
+						<button type="button" class="btn btn-success btn-xs" ng-click="addIndex()">
+						<span class="glyphicon glyphicon-plus"></span>
+						</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 
 	<div class="panel panel-primary">
 		<div class="panel-heading"><b>Documents</b></div>
@@ -96,17 +107,17 @@
 		</form>
 		</div>	
 		<div class="panel-footer" ng-hide="documents==undefined || documents==[]">Query found {{ explain.matches }} documents in {{ explain.time }}ms. It scanned {{ explain.scanned }} documents using index "{{ explain.index }}".</div>
-	</div>
 	
 
-	<table class="table table-striped table-bordered table-hover doctable">
-		<tbody>
-			<tr ng-show="documents==undefined || documents==[]"><td colspan="2"><i class='fa fa-spinner fa-spin'></i> Loading...</td></tr>
-			<tr ng-repeat="doc in documents">
-				<td class="small" width="180"><a href="#/db/{{selectedDB}}/{{selectedCol}}/{{doc._id.$id}}">{{doc._id.$id}}</a></td><td class="json" ng-bind-html="doc | colorjson"></td>
-			</tr>
-		</tbody>
-	</table>
+		<table class="table table-striped table-hover doctable">
+			<tbody>
+				<tr ng-show="documents==undefined || documents==[]"><td colspan="2"><i class='fa fa-spinner fa-spin'></i> Loading...</td></tr>
+				<tr ng-repeat="doc in documents">
+					<td class="small" width="180"><a href="#/db/{{selectedDB}}/{{selectedCol}}/{{doc._id.$id}}">{{doc._id.$id}}</a></td><td class="json" ng-bind-html="doc | colorjson"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 
 	<span ng-hide="documents==undefined || documents==[]">
 		<pagination total-items="explain.matches" page="page" max-size="maxSize" items-per-page="pageSize.name" class="pagination-sm" boundary-links="true" rotate="true" num-pages="numPages" on-select-page="selectPage(page)"></pagination>

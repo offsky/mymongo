@@ -101,10 +101,17 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 
 		$http.get(apiPath + '/collections.php?db='+dbname)
 			.success(function(data) {
+				//sort data
+				data.sort(function(a,b) {
+					if(a.name.toLowerCase()==b.name.toLowerCase()) return 0;
+					if(a.name.toLowerCase()<b.name.toLowerCase()) return -1;
+					return 1;
+				})
+
 				$rootScope.allCollections[dbname] = data;
 				$rootScope.allIndexes[dbname] = {};
-				console.log("Collections Got");
-//				console.log(data);
+				//console.log("Collections Got");
+				//console.log(data);
 				$rootScope.$broadcast('update_collections');
 			})
 			.error(function(data) {

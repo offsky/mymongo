@@ -11,6 +11,10 @@
 <div class="col-md-10">
 	<h3><a href="#/db/{{selectedDB}}/{{selectedCol}}">{{selectedCol}}</a> &gt; {{ selectedDoc }}</h3>
 
+	<div class="pull-right">
+		<a ng-click="" class="pointer"><i class='fa fa-table'></i> Show as table</a> &nbsp;&nbsp; <a ng-click="" class="pointer"><i class='fa fa-list-ul'></i> Show as json</a>
+	</div>
+
 	<div class="showDoc" ng-show="doc && doc._id">
 		<pre ng-bind-html="doc | json"></pre>
 

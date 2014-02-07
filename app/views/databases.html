@@ -2,9 +2,11 @@
 
 	<p>phpMongoAdmin is a powerful administrative tool for MongoDB written in AngularJS and PHP.  With this tool you can view databases and collections. You can view and edit indexes and documents.  You can check on the health of your databases and view statistics.</p>
 	<br />
-	<table class="table table-striped table-bordered table-hover greyth">
+	<div class="panel panel-primary">
+	<div class="panel-heading"><b>Databases</b></div>
+	<table class="table table-striped table-hover greyth">
 		<thead><tr>
-			<th>Name</th>
+			<th>Name <b class="caret"></b></th>
 			<th>Collections</th>
 			<th>Objects</th>
 			<th>Size</th>
@@ -15,7 +17,7 @@
 		<tr ng-show="databases==undefined"><td colspan="6"><i class='fa fa-spinner fa-spin'></i> Loading...</td></tr>
 		<tr ng-show="databases && databases.length==0"><td colspan="6"><i class='fa fa-exclamation-triangle'></i> No databases are configured in config.php.  Please look at php/config_template.php for an example config file. Make a copy of this and rename it config.php and then put your Mongo DB credentials inside.</td></tr>
 		<tr ng-repeat="db in databases">
-		<td><a href="#/db/{{db.name}}">{{db.name}}</a> <i class="host">{{db.hosts | noport}}</i></td>
+			<td><a href="#/db/{{db.name}}">{{db.name}}</a> <i class="host">{{db.hosts | noport}}</i></td>
 			<td ng-bind-html="db.stats.collections | number"></td>
 			<td ng-bind-html="db.stats.objects | number"></td>
 			<td ng-bind-html="db.stats.fileSize | bytes:1"></td>
@@ -24,10 +26,31 @@
 		</tr>
 		</tbody>
 	</table>
+	</div>
+
+	<div class="panel panel-primary">
+	<div class="panel-heading"><b>Open Connections</b></div>
+	<table class="table table-striped table-hover greyth">
+		<thead><tr>
+			<th>Server</th>
+			<th><span class="hastip" tooltip="When the server was last pinged and how long it took." tooltip-placement="bottom">Last Ping</span></th>
+			<th><span class="hastip" tooltip="When the topology of a replicaset was last checked." tooltip-placement="bottom">Last ismaster</span></th>
+			<th>Type</th>
+		</tr></thead>
+		<tbody>
+		<tr ng-show="connections==undefined"><td colspan="6"><i class='fa fa-spinner fa-spin'></i> Loading...</td></tr>
+		<tr ng-repeat="con in connections">
+			<td>{{ con.server.username }}@{{ con.server.host }}:{{ con.server.port }}</td>
+			<td>{{ con.connection.last_ping*1000 | date }} in {{ con.connection.ping_ms }}ms</td>
+			<td>{{ con.connection.last_ismaster }}</td>
+			<td>{{ con.connection.connection_type }} = {{ con.connection.connection_type_desc }}</td>
+		</tr>
+		</tbody>
+	</table>
+	</div>
 
 	<div ng-show="client==0">
 		<i class='fa fa-exclamation-triangle'></i> The PHP Mongo driver is not installed.  Please <a href="http://us2.php.net/manual/en/mongo.installation.php">install it</a> before using this tool.
 	</div>
 	
-	{{ connections }}
 </div>

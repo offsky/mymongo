@@ -2,7 +2,7 @@ html,body{
     height: 100%; /* needed for sticky footer */
 }
 body { padding-top: 70px; }
-h2, h3 { margin-top:0px;}
+h2, h3 { margin-top:2px;}
 .small { font-size:.85em;}
 
 #everything {
@@ -27,14 +27,19 @@ h2, h3 { margin-top:0px;}
 .dropdown-menu li a.selected { font-weight: bold;}
 
 /* Sidebar */
+.sidebar { overflow:hidden;  text-overflow: ellipsis;}
 .sidebar .badge { font-weight: 200; font-size:0.7em;}
 .sidebar .list-group-item { padding: 10px 6px;}
+.sidebar .host { color:#999; font-size:0.85em; white-space: nowrap;}
+.sidebar h3 { margin-bottom:3px;}
 
 /* Home */
-.vDatabases td i.host { color:#999; float:right;}
+.vDatabases td i.host { color:#999; margin-left: 20px;}
 
 /* Collection */
 .container { max-width: none; margin-right:20px;}
+
+.nav-pills li { cursor: pointer;}
 
 .doctable {  table-layout:fixed; }
 .doctable tr, .doctable td {
@@ -63,6 +68,8 @@ button#search { margin-left:50px; display:inline-block;}
 
 .vDocument .delDoc { margin-top:50px;}
 .vDocument .showDoc { margin-top:50px;}
+
+.pointer { cursor: pointer;}
 
 /* Footer */
 
