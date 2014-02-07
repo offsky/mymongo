@@ -24,6 +24,14 @@ angular.module('phpMongoAdmin.filters', [])
 	}
 })
 
+//Removes the port part of a host
+.filter('noport', function() {
+	return function(value) {
+		if(value.indexOf(":")!==-1) value = value.substring(0,value.indexOf(":"));
+		return value;
+	}
+})
+
 //Inserts a loading spinner if the value is null
 .filter('healthDecode', function() {
 	return function(value) {
@@ -46,10 +54,12 @@ angular.module('phpMongoAdmin.filters', [])
 })
 
 //Does syntax coloring of json. Pass in an object.
+//http://stackoverflow.com/questions/4810841/how-can-i-pretty-print-json-using-javascript
 .filter('colorjson', function() {
 	return function(json) {
-		//http://stackoverflow.com/questions/4810841/how-can-i-pretty-print-json-using-javascript
+				
 		json = angular.toJson(json);
+		if(!json) return json;
 		json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace('"_id":{},','');
 		return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
 		  	var cls = 'number';

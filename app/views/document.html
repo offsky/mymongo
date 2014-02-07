@@ -9,10 +9,26 @@
 	<span ng-show="db.stats.collections!=undefined">{{db.stats.collections | number:0}} Collections</span>
 </div>
 <div class="col-md-10">
-	<h3>{{collection.name}}</h3>
+	<h3><a href="#/db/{{selectedDB}}/{{selectedCol}}">{{selectedCol}}</a> &gt; {{ selectedDoc }}</h3>
 
-	Document {{ selectedDoc }}
+	<div class="showDoc" ng-show="doc && doc._id">
+		<pre ng-bind-html="doc | json"></pre>
 
+		<div class="delDoc">
+			<button ng-show="confirm==0" type="button" class="btn btn-warning" ng-hide="confirm" ng-click="confirm=1">Delete Document</button>
+			<span ng-show="confirm==1">
+				Are you sure?<br /><br />
+				<button type="button" class="btn btn-danger" ng-click="delete()">sudo Delete Document</button>
+			</span>
+			<i ng-show="confirm==2" class='fa fa-spinner fa-spin'></i>
+		</div>
+	</div>
+	<div ng-show="doc==null">
+		The document does not exist
+	</div>
+	<div ng-show="doc && doc._id==undefined">
+		<i class='fa fa-spinner fa-spin'></i> Loading...
+	</div>
 </div>
 
 </div></div>

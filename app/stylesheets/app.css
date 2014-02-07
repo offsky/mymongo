@@ -26,10 +26,12 @@ h2, h3 { margin-top:0px;}
 /* Navbar */
 .dropdown-menu li a.selected { font-weight: bold;}
 
-
 /* Sidebar */
 .sidebar .badge { font-weight: 200; font-size:0.7em;}
 .sidebar .list-group-item { padding: 10px 6px;}
+
+/* Home */
+.vDatabases td i.host { color:#999; float:right;}
 
 /* Collection */
 .container { max-width: none; margin-right:20px;}
@@ -52,12 +54,15 @@ input#explain { margin-left:20px; display:inline-block;}
 button#search { margin-left:50px; display:inline-block;}
 
 /* Document */
-td.json { color:#999; }
-td.json .string { color: #1e796e; }
-td.json .number { color: #900; }
-td.json .boolean { color: #268bd2; }
-td.json .null { color: #268bd2; }
-td.json .key { color: #333; }
+.json { color:#999; }
+.json .string { color: #1e796e; }
+.json .number { color: #900; }
+.json .boolean { color: #268bd2; }
+.json .null { color: #268bd2; }
+.json .key { color: #333; }
+
+.vDocument .delDoc { margin-top:50px;}
+.vDocument .showDoc { margin-top:50px;}
 
 /* Footer */
 

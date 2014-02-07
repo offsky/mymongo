@@ -402,6 +402,9 @@ class mymongo {
 		
 		$collection = $this->db->selectCollection($this->MyTable);
 		
+		if(is_string($fields)) { 
+			$fields = $this->fieldStrToArray($fields);
+		}
 		try {
 			$cursor = $collection->find($query,$fields)->timeout($timeout);
 			if(!empty($sort)) $cursor->sort($sort);
@@ -538,7 +541,9 @@ class mymongo {
 		
 		$collection = $this->db->selectCollection($this->MyTable);
 		
-		$fields = $this->fieldStrToArray($fields);
+		if(is_string($fields)) {
+			$fields = $this->fieldStrToArray($fields);
+		}
 		
 		try {
 			$result = $collection->findOne($query,$fields);
@@ -937,14 +942,19 @@ class mymongo {
 	public function client_info() {
 		$driver = Mongo::VERSION;
 		$ping = ini_get("mongo.ping_interval");
-	
-		//$connections = $m->getConnections();		
-		//$hosts = $m->getHosts();
 
-		return array("driver"=>$driver,"ping"=>$ping);
+		return array("driver"=>$driver, "ping"=>$ping);
 	}
 	
-
+	/* CONNECTIONS ============================================================================
+		Returns a list of the open connections
+	*/	
+	public function connections() {
+		$connections = $this->m->getConnections();
+		
+		//$hosts = $m->getHosts();
+		return $connections;
+	}
 	/* DBINFO ============================================================================
 		Returns diagnostic information about a database
 	*/	

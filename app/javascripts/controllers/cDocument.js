@@ -3,7 +3,7 @@
 The controller for the top navigation. Also initializes the models
 -----------------------------------------------------------------*/
 
-angular.module('phpMongoAdmin').controller('cDocument', ['$scope', '$rootScope', '$routeParams', 'phpMongoAdmin.mDatabase', function($scope, $rootScope, $routeParams, Database) {
+angular.module('phpMongoAdmin').controller('cDocument', ['$scope', '$rootScope', '$routeParams', 'phpMongoAdmin.mDatabase', '$location', function($scope, $rootScope, $routeParams, Database, $location) {
 
 	$rootScope.selectedDB = "";
 	$rootScope.selectedCol = "";
@@ -11,6 +11,7 @@ angular.module('phpMongoAdmin').controller('cDocument', ['$scope', '$rootScope',
 	$scope.db = null;
 	$scope.collections = null;
 	$scope.collection = null;
+	$scope.confirm = 0;
 
 	//==================================================================
 	// Called each time the view is loaded or reloaded
@@ -23,7 +24,6 @@ angular.module('phpMongoAdmin').controller('cDocument', ['$scope', '$rootScope',
 
 		$scope.update();
 	};
-
 
 	//==================================================================
 	// Listens for broadcass that a db was updated and refreshes the list
@@ -40,11 +40,9 @@ angular.module('phpMongoAdmin').controller('cDocument', ['$scope', '$rootScope',
 			}
 		}
 	});
-	$rootScope.$on('update_indexes', function() {
-		console.log("update_indexes");
-		$scope.indexes = Database.getIndexes($rootScope.selectedDB,$rootScope.selectedCol);
-	});
 
+	//==================================================================
+	//
 	$scope.update = function() {
 		console.log("cDocument update");
 		$rootScope.pagetitle = $rootScope.selectedDB+" "+$rootScope.selectedCol;
@@ -57,11 +55,18 @@ angular.module('phpMongoAdmin').controller('cDocument', ['$scope', '$rootScope',
 				if($scope.collections[i].name==$rootScope.selectedCol) $scope.collection = $scope.collections[i];
 			}
 		}
-
-		$scope.indexes = Database.getIndexes($rootScope.selectedDB,$rootScope.selectedCol);
 	
-		Database.getDocuments($rootScope.selectedDB,$rootScope.selectedCol,$scope.query,$scope.fields,$scope.sort,$scope.page,$scope.pageSize.name);
-	}
+		Database.getDocument($rootScope.selectedDB,$rootScope.selectedCol,$rootScope.selectedDoc);
+	};
 
+	//==================================================================
+	// Deletes the document
+	$scope.delete = function() {
+		$scope.confirm=2;
+		var promise = Database.deleteDocument($rootScope.selectedDB,$rootScope.selectedCol,$rootScope.selectedDoc);
+		promise.success(function() {
+			$location.path('/db/' + $rootScope.selectedDB + '/' + $rootScope.selectedCol); //go to the list
+		});
+	};
 }]);
 

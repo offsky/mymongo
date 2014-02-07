@@ -13,7 +13,10 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 	$rootScope.allCollections = {}; //The collections for the various databases
 	$rootScope.allIndexes = []; //The collections for the various databases
 	$rootScope.documents = []; // the array of documents that we are currently viewing
+	$rootScope.connections = []; // the array of open connections
+	$rootScope.doc = {};
 	$rootScope.explain = {};
+
 	
 	var apiPath = $$config.apiPath;
 
@@ -27,8 +30,10 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 		var promise = getDatabases(true);
 		promise.then(function() {
 			getDatabases(false);
+			getConnections();
 		})
 
+		//get the client info
 		$http.get(apiPath + '/client.php')
 			.success(function(data) {
 				$rootScope.client = data;
@@ -40,6 +45,24 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 			});
 	};
 
+	//==================================================================
+	// Gets info about the open connections
+	function getConnections() {
+		//gets the first db name because connections needs one open connection to be able to get the rest
+		var first = Object.keys($rootScope.databases)[0];
+
+		$http.get(apiPath + '/connections.php?db='+first)
+			.success(function(data) {
+				$rootScope.connections = data;
+				console.log(data);
+				$rootScope.$broadcast('update_databases');
+			})
+			.error(function(data) {
+				console.log("ERROR FETCHING connections",data);
+			});
+
+	}
+	
 	//==================================================================
 	// Gets all the databases. If fast=true it doesn't do any verification
 	// If fast is false it will do a healthceck and gather statistics
@@ -179,11 +202,12 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 		
 		console.log("getDocument",dbname,collection,id);
 
-		$rootScope.document = {};
+		$rootScope.doc = {};
 		
 		$http.get(apiPath + '/document.php?db='+dbname+'&col='+collection+'&id='+id)
 			.success(function(data) {
-				$rootScope.document = data;
+				$rootScope.doc = data;
+				if($rootScope.doc=="null" || $rootScope.doc=="") $rootScope.doc = null;
 				console.log("doc Got");
 				console.log(data);
 				$rootScope.$broadcast('update_doc');
@@ -193,7 +217,24 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 			});
 	};
 
+	//==================================================================
+	// Delete document
+	function deleteDocument(dbname,collection,id) {
+		console.log("getDocument",dbname,collection,id);
+		
+		var promise = $http.post(apiPath + '/doc_remove.php','db='+dbname+'&col='+collection+'&id='+id, {'headers': {'Content-Type': 'application/x-www-form-urlencoded'}});
+		
+		promise.success(function(data) {
+			$rootScope.doc = {};
+			console.log("deleted document",data);
+		});
+		promise.error(function(data) {
+			console.log("ERROR deleting document",data);
+		});
+		return promise;
+	}
+
 	return {
-		init: init, get: get, getCollections:getCollections, getIndexes:getIndexes, deleteIndex:deleteIndex, addIndex:addIndex, getDocuments:getDocuments, getDocument:getDocument
+		init: init, get: get, getCollections:getCollections, getIndexes:getIndexes, deleteIndex:deleteIndex, addIndex:addIndex, getDocuments:getDocuments, getDocument:getDocument, deleteDocument:deleteDocument
 	};
 }]); //end factory and module
