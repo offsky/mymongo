@@ -45,8 +45,6 @@ angular.module('phpMongoAdmin.filters', [])
 	}
 })
 
-
-
 //Does syntax coloring of json. Pass in an object.
 .filter('colorjson', function() {
 	return function(json) {
@@ -71,5 +69,23 @@ angular.module('phpMongoAdmin.filters', [])
 	}
 })
 
+//If the number is 1million or more, it presents it better to avoid taking up to much horizontal space
+.filter('bignumber', function() {
+	return function(value) {
+		value = parseInt(value);
+		var suffix = "";
+		if(value>=1000000) {
+			suffix = " M";
+			value = Math.round(value/1000000);
+		} else if(value>=1000) {
+			suffix = " K";
+			value = Math.round(value/1000);
+		}
+		while (/(\d+)(\d{3})/.test(value.toString())){
+      	value = value.toString().replace(/(\d+)(\d{3})/, '$1'+','+'$2');
+    	}
+		return value+suffix;
+	}
+})
 
 ;

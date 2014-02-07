@@ -4,7 +4,7 @@
 	<h3><a href="#/db/{{selectedDB}}">{{ selectedDB }}</a></h3>
 	<br />
 	<div class="list-group">
-		<a ng-repeat="c in collections" class="list-group-item" ng-class="{active:c.name==collection.name}" href="#/db/{{selectedDB}}/{{c.name}}">{{c.name}} <span class="badge">{{c.stats.count}}</span></a>
+		<a ng-repeat="c in collections" class="list-group-item" ng-class="{active:c.name==collection.name}" href="#/db/{{selectedDB}}/{{c.name}}">{{c.name}} <span class="badge">{{c.stats.count | bignumber}}</span></a>
 	</div>
 	<span ng-show="db.stats.collections!=undefined">{{db.stats.collections | number:0}} Collections</span>
 </div>

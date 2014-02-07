@@ -47,6 +47,7 @@
 		</thead>
 		<tbody>
 			<tr ng-show="collections==undefined || collections=={}"><td colspan="7"><i class='fa fa-spinner fa-spin'></i> Loading...</td></tr>
+			<tr><td ng-hide="db.health==0" colspan="7" ng-bind-html="db.health | healthDecode"></td></tr>
 			<tr ng-repeat="c in collections" class="text-right">
 				<td class="text-left"><a href="#/db/{{selectedDB}}/{{c.name}}">{{c.name}}</a></td>
 				<td>{{c.stats.count | number:0}}</td>
