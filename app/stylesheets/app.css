@@ -44,13 +44,20 @@ h2, h3 { margin-top:0px;}
 .pagination li {
 	cursor: pointer;	
 }
+
+input#query { width:250px; display:inline-block;}
+input#fields { width:150px; display:inline-block;}
+input#sort { width:150px; display:inline-block;}
+input#explain { margin-left:20px; display:inline-block;}
+button#search { margin-left:50px; display:inline-block;}
+
 /* Document */
 td.json { color:#999; }
-.string { color: #1e796e; }
-.number { color: #900; }
-.boolean { color: #268bd2; }
-.null { color: #268bd2; }
-.key { color: #333; }
+td.json .string { color: #1e796e; }
+td.json .number { color: #900; }
+td.json .boolean { color: #268bd2; }
+td.json .null { color: #268bd2; }
+td.json .key { color: #333; }
 
 /* Footer */
 

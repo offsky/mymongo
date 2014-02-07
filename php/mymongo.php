@@ -394,15 +394,13 @@ class mymongo {
 	The fields(comma separated string) specified will be returned or all fields if not
 	sort is an array('age' => -1, 'date' => 1)
 */
-	public function find($query,$fields = "",$sort="",$limit=0,$timeout=2000) {
+	public function find($query,$fields = array(),$sort=null,$limit=0,$timeout=2000) {
 		$this->log_db_mark("STARTING FIND");
 		$start = microtime(true);
 		
 		if($this->db==null) return null; //we never got connected
 		
 		$collection = $this->db->selectCollection($this->MyTable);
-		
-		$fields = $this->fieldStrToArray($fields);
 		
 		try {
 			$cursor = $collection->find($query,$fields)->timeout($timeout);
@@ -424,7 +422,6 @@ class mymongo {
 	Returns information about the query on the passed cursor.  Includes the index, number or records
 	matched and scanned. Also query time.
 */
-
 	public function explain($cursor) {
 		$start = microtime(true);
 		if($this->db==null) return null; //we never got connected
@@ -935,13 +932,9 @@ class mymongo {
 	
 
 	/* CLIENTINFO ============================================================================
-		Returns diagnostic information about a php mongo driver.  If PHP is not installed, returns 0;
+		Returns diagnostic information about a php mongo driver
 	*/	
 	public function client_info() {
-		if(!class_exists('Mongo')) {
-			return 0;
-		}
-
 		$driver = Mongo::VERSION;
 		$ping = ini_get("mongo.ping_interval");
 	

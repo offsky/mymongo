@@ -13,7 +13,8 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 	$rootScope.allCollections = {}; //The collections for the various databases
 	$rootScope.allIndexes = []; //The collections for the various databases
 	$rootScope.documents = []; // the array of documents that we are currently viewing
-
+	$rootScope.explain = {};
+	
 	var apiPath = $$config.apiPath;
 
 	//==================================================================
@@ -150,14 +151,19 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 	// Gets documents for this db and collection
 	function getDocuments(dbname,collection,query,fields,sort,page,num) {
 		page--; //1 indexed to 0 indexed conversion
-		
+
+		query = "{"+query+"}";		
+		fields = "{"+fields+"}";		
+		sort = "{"+sort+"}";		
+
 		console.log("getDocuments",dbname,collection,query,fields,sort,page,num);
 
 		$rootScope.documents = null;
 		
 		$http.get(apiPath + '/documents.php?db='+dbname+'&col='+collection+'&query='+query+'&fields='+fields+'&sort='+sort+'&page='+page+'&num='+num)
 			.success(function(data) {
-				$rootScope.documents = data;
+				$rootScope.documents = data.docs;
+				$rootScope.explain = data.explain;
 				console.log("docs Got");
 				console.log(data);
 				$rootScope.$broadcast('update_docs');

@@ -43,8 +43,10 @@
 	</div>
 	<div id="footer">
 		<a href="https://github.com/Toodledo/mymongo">GitHub</a> | 
-		<span ng-show="client">Local <a href="http://www.php.net/mongo/">PHP Driver</a> version: <a href="https://jira.mongodb.org/browse/PHP" target="_new">{{ client.driver }}</a>. Ping: {{ client.ping }}</span>
-		<span ng-hide="client"><a href="http://www.php.net/mongo/">PHP Mongo Driver</a> not installed</span>
+		<a href="http://docs.mongodb.org/manual/">MongoDB</a> | 
+		<a href="http://www.php.net/mongo/">PHP::Mongo</a> | 
+		<span ng-show="client">Local Driver version: <a href="https://jira.mongodb.org/browse/PHP">{{ client.driver }}</a>. Ping: {{ client.ping }}</span>
+		<span ng-hide="client"><a href="http://www.php.net/manual/en/mongo.installation.php">PHP Mongo Driver</a> not installed</span>
 
 	</div>
 
