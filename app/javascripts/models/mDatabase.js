@@ -54,6 +54,7 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 		$http.get(apiPath + '/connections.php?db='+first)
 			.success(function(data) {
 				$rootScope.connections = data;
+				if($rootScope.connections=="null" || $rootScope.connections==null) $rootScope.connections=undefined;
 				console.log(data);
 				$rootScope.$broadcast('update_databases');
 			})
@@ -101,12 +102,14 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 
 		$http.get(apiPath + '/collections.php?db='+dbname)
 			.success(function(data) {
+				if(data=="null" || data==null) data=[];
+
 				//sort data
 				data.sort(function(a,b) {
 					if(a.name.toLowerCase()==b.name.toLowerCase()) return 0;
 					if(a.name.toLowerCase()<b.name.toLowerCase()) return -1;
 					return 1;
-				})
+				});
 
 				$rootScope.allCollections[dbname] = data;
 				$rootScope.allIndexes[dbname] = {};

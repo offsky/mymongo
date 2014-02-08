@@ -149,7 +149,8 @@ class mymongo {
 */
 	private function connectClient() {		
 		if(empty($this->MyHost)) return false;
-		
+		if(!class_exists("MongoClient")) return false;
+
 		//try to connect to the db. Keep a low timeout to prevent stalled DB crashing apache with hung PHP jobs
 		$flags = array("connectTimeoutMS" => 2000, "socketTimeoutMS"=>2000);
 		if(!empty($this->replicaSet)) $flags['replicaSet'] = $this->replicaSet;
@@ -239,6 +240,8 @@ class mymongo {
 	Returns information for each collection in this database
 */
 	public function listCollections() {
+		if($this->db==null) return null; //we never got connected
+		
 		$result = array();
 		$collections = $this->db->listCollections();
 		foreach ($collections as $c) {
@@ -940,6 +943,8 @@ class mymongo {
 		Returns diagnostic information about a php mongo driver
 	*/	
 	public function client_info() {
+		if(!class_exists("Mongo")) return 0;
+
 		$driver = Mongo::VERSION;
 		$ping = ini_get("mongo.ping_interval");
 
@@ -950,9 +955,18 @@ class mymongo {
 		Returns a list of the open connections
 	*/	
 	public function connections() {
-		$connections = $this->m->getConnections();
-		
+		$connections = null;
+
+		if($this->m) {
+			try {
+				$connections = $this->m->getConnections();
+			} catch(MongoException $e) {
+				$connections = null;
+				$this->log_db_error("connections",'',$e->getMessage(),$e->getCode());
+			}
+		}
 		//$hosts = $m->getHosts();
+
 		return $connections;
 	}
 	/* DBINFO ============================================================================
@@ -960,6 +974,7 @@ class mymongo {
 	*/	
 	public function db_info() {
 		$result = null;
+		$result2 = null;
 		if($this->db) {
 			try {
 				$result = $this->db->command(array('buildinfo'=>1)); 

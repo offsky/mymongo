@@ -28,7 +28,7 @@
 	</table>
 	</div>
 
-	<div class="panel panel-primary">
+	<div class="panel panel-primary" ng-hide="connections==undefined">
 	<div class="panel-heading"><b>Open Connections</b></div>
 	<table class="table table-striped table-hover greyth">
 		<thead><tr>
@@ -38,7 +38,7 @@
 			<th>Type</th>
 		</tr></thead>
 		<tbody>
-		<tr ng-show="connections==undefined"><td colspan="6"><i class='fa fa-spinner fa-spin'></i> Loading...</td></tr>
+		<tr><td colspan="6"><i class='fa fa-spinner fa-spin'></i> Loading...</td></tr>
 		<tr ng-repeat="con in connections">
 			<td>{{ con.server.username }}@{{ con.server.host }}:{{ con.server.port }}</td>
 			<td>{{ con.connection.last_ping*1000 | date }} in {{ con.connection.ping_ms }}ms</td>

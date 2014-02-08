@@ -22,7 +22,5 @@
 	// $MYMONGO[1]['adminCollection'] = "healthcheck";
 
  
-	$lib_dir = "/Users/jake/Sites/mymongo/php/"; //put your path here
-
 
 ?>
