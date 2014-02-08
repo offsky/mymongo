@@ -27,8 +27,8 @@
 
 	<!-- build:css stylesheets/styles.css -->
 	<link rel="stylesheet" href="bower_components/bootstrap/css/bootstrap.css"/>
-	<link rel="stylesheet" href="bower_components/bootstrap/css/bootstrap-theme.css"/>
-	<xlink rel="stylesheet" href="stylesheets/theme2.css" comment="http://pikock.github.io/bootstrap-magic/app/index.html#!/editor"/>
+	<xlink rel="stylesheet" href="bower_components/bootstrap/css/bootstrap-theme.css"/>
+	<link rel="stylesheet" href="stylesheets/theme2.css" comment="http://pikock.github.io/bootstrap-magic/app/index.html#!/editor"/>
 	<link rel="stylesheet" href="stylesheets/vendor/default.css"/>
 	<link rel="stylesheet" href="stylesheets/app.css"/>
 	<link rel="stylesheet" href="stylesheets/font-awesome.css"/>
@@ -41,7 +41,7 @@
 		<div ng-include src="'views/navbar.html'" ng-controller="cNav" ng-init="init()"></div>
 		<div id="app" ng-view></div>
 	</div>
-	<div id="footer">
+	<div id="footer" class="navbar-default">
 		<a href="https://github.com/Toodledo/mymongo"><i class='fa fa-github-alt'></i> GitHub</a> | 
 		<a href="http://docs.mongodb.org/manual/">MongoDB</a> | 
 		<a href="http://www.php.net/mongo/">PHP::Mongo</a> | 

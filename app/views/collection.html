@@ -15,7 +15,7 @@
 		<li ng-class="{active:tab==1}"><a ng-click="tab=1">Indexes</a></li>
 		<li ng-class="{active:tab==2}"><a ng-click="tab=2">Stats</a></li>
 	</ul>
-	<h3>{{collection.name}}</h3>
+	<h3>{{selectedCol}}</h3>
 	<br class="clearfix"/>
 
 	<div ng-show="tab==2" class="panel panel-primary">
