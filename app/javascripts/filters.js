@@ -47,6 +47,7 @@ angular.module('phpMongoAdmin.filters', [])
 			case 7: return "<i class='fa fa-exclamation-triangle'></i> ReplicaSet Failover";
 			case 8: return "<i class='fa fa-exclamation-triangle'></i> Uncaught Exception";
 			case 9: return "<i class='fa fa-exclamation-triangle'></i> Update Failed";
+			case 10: return "<i class='fa fa-exclamation-triangle'></i> Connection Error";
 
 		}
 		return "<i class='fa fa-question-circle'></i> unknown";

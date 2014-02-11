@@ -931,7 +931,8 @@ class mymongo {
 			if($result==-1) return 6;
 		
 			//0 means as specified, 1 means with replica set disabled, 2 means second of pair used
-			if($this->connectionType!=0) return 7;
+			if($this->connectionType!=0 && $this->replicaSet) return 7;
+			else if($this->connectionType!=0) return 10;
 		} catch(MongoException $e) {
 			return 8;
 		}
