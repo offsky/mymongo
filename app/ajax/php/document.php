@@ -18,6 +18,8 @@ $query = array('_id' => new MongoId($id));
 //do the query
 $doc = $m->findOne($query);
 
+$doc = private_transformation_read($doc); //in config.php
+
 echo json_encode($doc);
 
 ?>

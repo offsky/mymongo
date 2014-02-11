@@ -21,6 +21,21 @@
 	// $MYMONGO[1]['ssl'] = false;
 	// $MYMONGO[1]['adminCollection'] = "healthcheck";
 
- 
+	//if you need to provide some custom logic to transform documents
+	//into a more readable format, here is where you do it.
+	//for example, if you need to uncompress or decrypt data, do it here
+ 	function private_transformation_read($doc) {
+ 		//your code here, otherwise return $doc unchanged
+ 		return $doc;
+ 	}
+
+ 	//if you need to provide some custom logic to transform documents
+	//into a more writtable format, here is where you do it.
+	//for example, if you need to compress or encrypt data, do it here
+ 	function private_transformation_write($doc) {
+ 		//your code here, otherwise return $doc unchanged
+ 		return $doc;
+ 	}
+
 
 ?>

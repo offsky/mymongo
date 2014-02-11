@@ -37,7 +37,7 @@ h2, h3 { margin-top:2px;}
 .vDatabases td i.host { color:#999; margin-left: 20px;}
 
 /* Collection */
-.container { max-width: none; margin-right:20px;}
+.container { max-width: none; }
 
 .nav-pills li { cursor: pointer;}
 

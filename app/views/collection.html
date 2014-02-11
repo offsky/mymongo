@@ -93,7 +93,13 @@
 	</div>
 
 	<div class="panel panel-primary">
-		<div class="panel-heading"><b>Documents</b></div>
+		<div class="panel-heading"><b>Documents</b>
+			<div class="btn-group pull-right">
+  				<button type="button" class="btn btn-xs btn-default" ng-model="displayMode" btn-radio="1"><i class='fa fa-table'></i> Show as table</button>
+  				<button type="button" class="btn btn-xs btn-default" ng-model="displayMode" btn-radio="2"><i class='fa fa-list-ul'></i> Show as json</button>
+			</div>
+			
+		</div>
 		<div class="panel-body">
 	  	<form ng-submit="search()">
 		find( { 

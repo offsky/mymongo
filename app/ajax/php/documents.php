@@ -46,6 +46,7 @@ $docs = array();
 while(($doc = $m->getNext($cursor)) && $num) {
 	if($doc==-1) return false; //Mongo connection error
 	if(empty($doc['_id'])) return false; //Mongo error
+	$doc = private_transformation_read($doc); //in config.php
 	$docs[] = $doc;
 	$num--;
 }

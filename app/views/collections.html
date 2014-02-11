@@ -2,7 +2,7 @@
 
 <div class="col-md-2 sidebar">
 	<h3>{{ selectedDB }}</h3>
-	<span class="host hastip" tooltip="{{db.info.sysInfo}}" tooltip-placement="right">{{db.hosts | noport}}</span>
+	<span class="host hastip" tooltip="{{db.info.sysInfo}}" tooltip-placement="right" tooltip-append-to-body="1">{{db.hosts | noport}}</span>
 
 	<br /><br />
 	<table ng-hide="(databases && databases.length==0) || db.health!=0" class="table table-striped table-bordered table-hover table-condensed small">
