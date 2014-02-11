@@ -48,6 +48,7 @@ angular.module('phpMongoAdmin.filters', [])
 			case 8: return "<i class='fa fa-exclamation-triangle'></i> Uncaught Exception";
 			case 9: return "<i class='fa fa-exclamation-triangle'></i> Update Failed";
 			case 10: return "<i class='fa fa-exclamation-triangle'></i> Connection Error";
+			case 11: return "<i class='fa fa-question-circle'></i> Not checked";
 
 		}
 		return "<i class='fa fa-question-circle'></i> unknown";

@@ -240,16 +240,17 @@ class mymongo {
 /* LISTCOLLECTIONS ============================================================================
 	Returns information for each collection in this database
 */
-	public function listCollections() {
+	public function listCollections($ignore="") {
 		if($this->db==null) return null; //we never got connected
 		
 		$result = array();
 		$collections = $this->db->listCollections();
 		foreach ($collections as $c) {
 			$name = $c->getName();
-			$stats = $this->db->command(array("collStats"=>$name));
-
-			$result[] = array('name'=>$name,'stats'=>$stats);
+			if($name!==$ignore) { //hide one collection
+				$stats = $this->db->command(array("collStats"=>$name));
+				$result[] = array('name'=>$name,'stats'=>$stats);
+			}
 		}
 		return $result;
 	}
@@ -900,7 +901,7 @@ class mymongo {
 */	
 	public function health($checkReplicaSet=true,$collection=null) {
 		if(!$this->m) return 1;
-		if(empty($collection)) return 1;
+		if(empty($collection)) return 11;
 		try {
 			$hosts = $this->m->getHosts();
 			$foundPrimary = false;

@@ -21,6 +21,9 @@
 	// $MYMONGO[1]['ssl'] = false;
 	// $MYMONGO[1]['adminCollection'] = "healthcheck";
 
+	$showAdminCollection = false; //this will hide the adminCollection table from being displayed
+	
+
 	//if you need to provide some custom logic to transform documents
 	//into a more readable format, here is where you do it.
 	//for example, if you need to uncompress or decrypt data, do it here

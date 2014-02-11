@@ -17,7 +17,7 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 
 	$scope.maxSize = 20; //number of pages to show in page bar
 	$scope.tab = 0;
-	$scope.displayMode = 1;
+	$scope.displayMode = 2;
 	$scope.tableHeadings = [];
 
 	$scope.query = "";
