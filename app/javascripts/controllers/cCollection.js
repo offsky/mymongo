@@ -17,7 +17,9 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 
 	$scope.maxSize = 20; //number of pages to show in page bar
 	$scope.tab = 0;
-	$scope.displayMode = 2;
+	$scope.displayMode = 1;
+	$scope.tableHeadings = [];
+
 	$scope.query = "";
 	$scope.fields = "";
 	$scope.sort = "";
@@ -56,7 +58,16 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 		$scope.i_name = "";
 		$scope.i_index = "";
 	});
-
+	$rootScope.$on('update_docs', function() {
+		console.log("update_docs");
+		if($scope.displayMode==1) { //table
+			$scope.tableHeadings = Database.getTableHeadings();
+			console.log("HEADINGs",$scope.tableHeadings);
+		}
+	});
+	
+	//==================================================================
+	//
 	$scope.update = function() {
 		console.log("cCollection update");
 		$rootScope.pagetitle = $rootScope.selectedDB+" "+$rootScope.selectedCol;
@@ -73,24 +84,33 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 		$scope.indexes = Database.getIndexes($rootScope.selectedDB,$rootScope.selectedCol);
 	
 		Database.getDocuments($rootScope.selectedDB,$rootScope.selectedCol,$scope.query,$scope.fields,$scope.sort,$scope.page,$scope.pageSize.name);
+
 	};
 
+	//==================================================================
+	//
 	$scope.selectPage = function(num) {
 		$scope.page = num;
 
 		Database.getDocuments($rootScope.selectedDB,$rootScope.selectedCol,$scope.query,$scope.fields,$scope.sort,$scope.page,$scope.pageSize.name);
 	};
 
+	//==================================================================
+	//
 	$scope.search = function() {
 		console.log("search",$scope.query);
 
 		Database.getDocuments($rootScope.selectedDB,$rootScope.selectedCol,$scope.query,$scope.fields,$scope.sort,$scope.page,$scope.pageSize.name);
 	};
 
+	//==================================================================
+	//
 	$scope.deleteIndex = function(index) {
 		Database.deleteIndex($rootScope.selectedDB,$rootScope.selectedCol,index);
 	};
 
+	//==================================================================
+	//
 	$scope.addIndex = function(index) {
 		Database.addIndex($rootScope.selectedDB,$rootScope.selectedCol,$scope.i_name,$scope.i_index);		
 	};

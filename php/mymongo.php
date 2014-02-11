@@ -54,6 +54,7 @@ class mymongo {
 	public $m = null; //the internal reference to the mongo driver
 	public $db = null; //the internal reference to the collection that we are working on
 	public $lastErr = null;
+	public $lastErrMsg = null;
 	
 
 /* MYMONGO ===========================================================================
@@ -437,7 +438,7 @@ class mymongo {
 			$explain = $cursor->explain();
 		} catch(MongoException $e) {
 			$this->log_db_error("EXPLAIN",$this->MyTable,$e->getMessage(),$e->getCode(),"");
-			$this->performance($start,"EXPLAIN",$query,false);
+			$this->performance($start,"EXPLAIN","",false);
 			return null;
 		}
 
@@ -1088,6 +1089,7 @@ class mymongo {
 		if(stristr($error,"Operation now in progress")) $error = "Timeout ($error)"; //"Operation now in progress" is code for timeout
 		
 		$this->lastErr = $code;
+		$this->lastErrMsg = $error;
 
 		$self = $PHP_SELF ? $PHP_SELF : $_SERVER["PHP_SELF"];
 		if(empty($self)) $self = $_SERVER['SCRIPT_NAME'];

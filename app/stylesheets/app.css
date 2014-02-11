@@ -58,6 +58,7 @@ input#sort { width:150px; display:inline-block;}
 input#explain { margin-left:20px; display:inline-block;}
 button#search { margin-left:50px; display:inline-block;}
 
+.panel-footer.error { background: #fee; color: #300;}
 /* Document */
 .json { color:#999; }
 .json .string { color: #1e796e; }

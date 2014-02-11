@@ -1,9 +1,11 @@
 'use strict';
-
-
 /* ==================================================================
+The main model for retreiving information from the server and feeding
+it to the controllers.
 
 TODO: may need to encodeURIComponent the db/collection names
+TODO: could pull out the collections and documents parts into separate models
+
 -----------------------------------------------------------------*/
 
 angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase', ['$http', '$rootScope', function($http, $rootScope) {
@@ -17,7 +19,6 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 	$rootScope.doc = {};
 	$rootScope.explain = {};
 
-	
 	var apiPath = $$config.apiPath;
 
 	//==================================================================
@@ -197,6 +198,7 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 			.success(function(data) {
 				$rootScope.documents = data.docs;
 				$rootScope.explain = data.explain;
+				$rootScope.error = data.error;
 				console.log("docs Got");
 				console.log(data);
 				$rootScope.$broadcast('update_docs');
@@ -204,6 +206,20 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 			.error(function(data) {
 				console.log("ERROR FETCHING docs",data);
 			});
+	};
+
+	//==================================================================
+	// It will scan the current documents and attempt
+	// to return an array of table headings for viewing data as table
+	function getTableHeadings() {
+		var headings = [];
+
+		angular.forEach($rootScope.documents, function(value, key) {
+			angular.forEach(value, function(v,col) {
+				if(headings.indexOf(col)==-1 && col!='_id') headings.push(col);
+			});
+		});
+		return headings;
 	};
 
 	//==================================================================
@@ -245,6 +261,6 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 	}
 
 	return {
-		init: init, get: get, getCollections:getCollections, getIndexes:getIndexes, deleteIndex:deleteIndex, addIndex:addIndex, getDocuments:getDocuments, getDocument:getDocument, deleteDocument:deleteDocument
+		init: init, get: get, getCollections:getCollections, getIndexes:getIndexes, deleteIndex:deleteIndex, addIndex:addIndex, getDocuments:getDocuments, getTableHeadings:getTableHeadings, getDocument:getDocument, deleteDocument:deleteDocument
 	};
 }]); //end factory and module
