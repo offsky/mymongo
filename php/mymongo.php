@@ -687,7 +687,36 @@ class mymongo {
 		return $result;
 	}
 	
+/* LISTUSERS ============================================================================
+	Shows the users for this db
 
+	TODO: add user by   $collection->insert(array('user' => $username, 'pwd' => md5($username . ":mongo:" . $password), 'readOnly' => false));
+
+*/
+	public function listUsers() {
+		$start = microtime(true);
+		
+		if($this->db==null) return null; //we never got connected
+		
+		$collection = $this->db->selectCollection("system.users");
+		
+		try {
+			$rows = array();
+			$cursor = $collection->find(array());
+			while($row = $cursor->getNext()) {
+				$rows[] = $row;
+			}
+		
+		} catch(MongoException $e) {
+			$this->log_db_error("listUsers",$this->MyTable,$e->getMessage(),$e->getCode());
+			return null;
+		} 
+		
+		$this->performance($start,"listUsers");
+	
+		return $rows;
+	}
+	
 	
 
 /* ensureIndex =========================================================================
@@ -948,10 +977,14 @@ class mymongo {
 	public function client_info() {
 		if(!class_exists("Mongo")) return 0;
 
-		$driver = Mongo::VERSION;
-		$ping = ini_get("mongo.ping_interval");
+		$ret = array();
+		$ret['driver'] = Mongo::VERSION;
+		$ret['ping'] = ini_get("mongo.ping_interval");
+		$ret['ismaster'] = ini_get("mongo.is_master_interval");
+		$ret['long'] = ini_get("mongo.long_as_object");
+		$ret['native'] = ini_get("mongo.native_long");
 
-		return array("driver"=>$driver, "ping"=>$ping);
+		return $ret;
 	}
 	
 	/* CONNECTIONS ============================================================================
@@ -976,18 +1009,29 @@ class mymongo {
 		Returns diagnostic information about a database
 	*/	
 	public function db_info() {
-		$result = null;
-		$result2 = null;
+		$buildinfo = null;
+		$dbStats = null;
+		$serverStatus = null;
+		$hostinfo = null;
+		$cmdInfo = null;
+		$connPoolStats = null;
+		$profileLevel = null;
+
 		if($this->db) {
 			try {
-				$result = $this->db->command(array('buildinfo'=>1)); 
-				$result2 = $this->db->command(array('dbStats'=>1)); 
+				$buildinfo = $this->db->command(array('buildinfo'=>1));
+				$dbStats = $this->db->command(array('dbStats'=>1));
+				//$serverStatus = $this->db->command(array('serverStatus'=>1)); //Requires admin perms
+				//$hostinfo = $this->db->command(array('hostInfo'=>1));  //Requires admin perms
+				//$cmdInfo = $this->db->command(array('getCmdLineOpts'=>1));  //Requires admin perms
+				//$connPoolStats = $this->db->command(array('connPoolStats'=>1));  //Requires admin perms
+				$profileLevel = $this->db->getProfilingLevel();			
 			} catch(MongoException $e) {
 				$result = null;
-				$this->log_db_error("BuildInfo",'',$e->getMessage(),$e->getCode());
+				$this->log_db_error("db_info",'',$e->getMessage(),$e->getCode());
 			}
 		}
-		return array($result,$result2);
+		return array($buildinfo,$dbStats,$serverStatus,$hostinfo,$cmdInfo,$connPoolStats,$profileLevel);
 	}
 	
 /* PERFORMANCE ===========================================================================

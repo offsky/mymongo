@@ -28,10 +28,12 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 
 		console.log("mDatabase INIT");
 
-		var promise = getDatabases(true);
+		var promise = getDatabases();
 		promise.then(function() {
-			getDatabases(false);
 			getConnections();
+			angular.forEach($rootScope.databases, function(values, name){
+				getHealthcheck(name);
+			});
 		})
 
 		//get the client info
@@ -56,43 +58,68 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 			.success(function(data) {
 				$rootScope.connections = data;
 				if($rootScope.connections=="null" || $rootScope.connections==null) $rootScope.connections=undefined;
-				console.log(data);
+				//console.log(data);
 				$rootScope.$broadcast('update_databases');
 			})
 			.error(function(data) {
 				console.log("ERROR FETCHING connections",data);
 			});
-
 	}
 	
 	//==================================================================
-	// Gets all the databases. If fast=true it doesn't do any verification
-	// If fast is false it will do a healthceck and gather statistics
-	function getDatabases(fast) {
+	// Gets all the databases quickly. 
+		function getDatabases() {
 		
-		var query = "";
-		if(fast!=undefined && fast==true) query = "?fast=1";
-
-		var promise = $http.get(apiPath + '/databases.php'+query);
+		var promise = $http.get(apiPath + '/databases.php?fast=1');
 		
 		promise.success(function(data) {
 			$rootScope.databases = data;
-			console.log("getDatabases callback",fast);
+			//console.log("getDatabases callback");
 			// console.table(data);
 			$rootScope.$broadcast('update_databases');
 		});
 		promise.error(function(data) {
-			console.log("ERROR getDatabases",fast,data);
+			console.log("ERROR getDatabases",data);
 		});
 		return promise;
 	}
 	
+	//==================================================================
+	// Does a healthcheck on all the databases and returns important stats
+	function getHealthcheck(name) {
+		console.log("health",name);
+
+		var promise = $http.get(apiPath + '/databases.php?one='+name);
+		
+		promise.success(function(data) {
+			$rootScope.databases[name] = data[name];
+			//console.log("getHealthcheck callback");
+			// console.table(data);
+			$rootScope.$broadcast('update_databases');
+		});
+		promise.error(function(data) {
+			console.log("ERROR getHealthcheck",fast,data);
+		});
+		return promise;
+	}
+
 	//==================================================================
 	// Gets one db by name 
 	function get(dbname) {
 		console.log("get db",dbname,$rootScope.databases);
 		return $rootScope.databases[dbname];
 	};
+
+	//==================================================================
+	// Gets users for this db
+	function getUsers(dbname) {
+		console.log("getUsers",dbname,$rootScope.databases);
+
+		if($rootScope.databases[dbname]==undefined) return [];
+	
+		var promise = $http.get(apiPath + '/users.php?db='+dbname);
+		return promise;
+	}
 
 	//==================================================================
 	// Gets collections for this db 
@@ -261,6 +288,6 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 	}
 
 	return {
-		init: init, get: get, getCollections:getCollections, getIndexes:getIndexes, deleteIndex:deleteIndex, addIndex:addIndex, getDocuments:getDocuments, getTableHeadings:getTableHeadings, getDocument:getDocument, deleteDocument:deleteDocument
+		init: init, get: get, getCollections:getCollections, getIndexes:getIndexes, getUsers:getUsers, deleteIndex:deleteIndex, addIndex:addIndex, getDocuments:getDocuments, getTableHeadings:getTableHeadings, getDocument:getDocument, deleteDocument:deleteDocument
 	};
 }]); //end factory and module

@@ -23,12 +23,20 @@
 			<tr><th><span class="hastip" tooltip="The total amount of space allocated to collections in this database for document storage." tooltip-placement="right">StorageSize</span></th><td class="text-right" ng-bind-html="db.stats.storageSize | bytes:1"></td></tr>
 			<tr><th><span class="hastip" tooltip="The total size of all indexes created on this database." tooltip-placement="right">IndexSize</span></th><td class="text-right" ng-bind-html="db.stats.indexSize | bytes:1"></td></tr>
 			<tr><th><span class="hastip" tooltip="The total size of the data files that hold the database. This value includes preallocated space and the padding factor." tooltip-placement="right">FileSize</span></th><td class="text-right" ng-bind-html="db.stats.fileSize | bytes:1"></td></tr>
+			<tr><th><span class="hastip" tooltip="If on, the profiler writes all the data it collects about slow queries to the system.profile collection." tooltip-placement="right" tooltip-append-to-body="1">Profile</span></th><td class="text-right" ng-bind-html="db.profile | profileLevel"></td></tr>
 		</tbody>
 	</table>
 
 	<div ng-hide="(databases && databases.length==0) || db.health!=0">
 	<b>Users</b>
-
+	<table ng-hide="(databases && databases.length==0) || db.health!=0" class="table table-striped table-bordered table-hover table-condensed small">
+		<thead>
+			<tr><th>User</th><th>readOnly</th></tr>
+		<thead>
+		<tbody>
+			<tr ng-repeat="user in users"><th>{{ user.user }}</th><td class="text-right">{{ user.readOnly }}</td></tr>
+		</tbody>
+	</table>
 	</div>
 
 </div>

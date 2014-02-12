@@ -8,6 +8,7 @@ angular.module('phpMongoAdmin').controller('cCollections', ['$scope', '$rootScop
 	$rootScope.selectedDB = "";
 	$scope.db = null;
 	$scope.collections = null;
+	$scope.users = [];
 
 	//==================================================================
 	// Called each time the view is loaded or reloaded
@@ -17,6 +18,12 @@ angular.module('phpMongoAdmin').controller('cCollections', ['$scope', '$rootScop
 		$rootScope.selectedDB = $routeParams.name;
 
 		$scope.update();
+
+		var promise = Database.getUsers($scope.selectedDB);
+		promise.success(function(data) {
+			$scope.users = data;
+			if($scope.users=="null") $scope.users=[];
+		});
 	};
 
 	//==================================================================
