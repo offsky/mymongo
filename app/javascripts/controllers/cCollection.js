@@ -3,7 +3,7 @@
 The controller for the top navigation. Also initializes the models
 -----------------------------------------------------------------*/
 
-angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope', '$routeParams', 'phpMongoAdmin.mDatabase', function($scope, $rootScope, $routeParams, Database) {
+angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope', '$routeParams', 'phpMongoAdmin.mDatabase', 'phpMongoAdmin.mSettings', function($scope, $rootScope, $routeParams, Database, Settings) {
 
 	$rootScope.selectedDB = "";
 	$rootScope.selectedCol = "";
@@ -30,8 +30,19 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 	$scope.init = function() {
 		console.log("Collection Init");
 		
+		//get saved display preferneces and sets watcher to store changes to preference
+		$scope.displayMode = Settings.getDisplayPref();
+		$scope.$watch('displayMode', function(newVal, oldVal){
+   	 	Settings.setDisplayPref(newVal);
+		});
+   	 	
 		$rootScope.selectedDB = $routeParams.name;
 		$rootScope.selectedCol = $routeParams.collection;
+
+		//Restore query params from settings if possible
+		$scope.query = Settings.getQuery($rootScope.selectedDB,$rootScope.selectedCol);
+		$scope.fields = Settings.getFields($rootScope.selectedDB,$rootScope.selectedCol);
+		$scope.sort = Settings.getSort($rootScope.selectedDB,$rootScope.selectedCol);
 
 		$scope.update();
 	};
@@ -60,10 +71,8 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 	});
 	$rootScope.$on('update_docs', function() {
 		console.log("update_docs");
-		if($scope.displayMode==1) { //table
-			$scope.tableHeadings = Database.getTableHeadings();
-			console.log("HEADINGs",$scope.tableHeadings);
-		}
+		
+		$scope.tableHeadings = Database.getTableHeadings();
 	});
 	
 	//==================================================================
@@ -99,6 +108,10 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 	//
 	$scope.search = function() {
 		console.log("search",$scope.query);
+
+		Settings.setQuery($rootScope.selectedDB,$rootScope.selectedCol,$scope.query);	
+		Settings.setFields($rootScope.selectedDB,$rootScope.selectedCol,$scope.fields);	
+		Settings.setSort($rootScope.selectedDB,$rootScope.selectedCol,$scope.sort);	
 
 		Database.getDocuments($rootScope.selectedDB,$rootScope.selectedCol,$scope.query,$scope.fields,$scope.sort,$scope.page,$scope.pageSize.name);
 	};

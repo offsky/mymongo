@@ -8,7 +8,7 @@ TODO: could pull out the collections and documents parts into separate models
 
 -----------------------------------------------------------------*/
 
-angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase', ['$http', '$rootScope', function($http, $rootScope) {
+angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase', ['$http', '$rootScope', 'Store', function($http, $rootScope, cache) {
 
 	$rootScope.client = {}; //The last copy of the client info
 	$rootScope.databases = null; //The last copy of the list of databases and info
@@ -98,7 +98,7 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 			$rootScope.$broadcast('update_databases');
 		});
 		promise.error(function(data) {
-			console.log("ERROR getHealthcheck",fast,data);
+			console.log("ERROR getHealthcheck",data);
 		});
 		return promise;
 	}
