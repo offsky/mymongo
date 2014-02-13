@@ -296,7 +296,27 @@ class mymongo {
 		//TODO: there does not currently seem to be a way to detect if it failed to create the collection
 
 		return true;
+	}
 
+
+/* DELETECOLLECTION ============================================================================
+	Removes a collection from the database
+*/
+	public function deleteCollection($name) {
+		if($this->db==null) return false; //we never got connected
+		if(empty($name)) return false;
+
+		$collection = $this->db->selectCollection($name);
+
+		try {
+			$result = $collection->drop();
+		} catch(MongoException $e) {
+			$this->log_db_error("deleteCollection",$name,$e->getMessage(),$e->getCode());
+			return false;
+		}
+
+		if($result['ok']) return true;
+		return false;
 	}
 
 /* INSERT ================================================================================

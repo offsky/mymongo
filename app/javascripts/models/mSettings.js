@@ -66,8 +66,23 @@ angular.module('phpMongoAdmin.mSettings', []).factory('phpMongoAdmin.mSettings',
 	//
 	function setSort(db,collection,value) {
 		cache.set("sort"+db+"."+collection,value);
+	};
+
+	//==================================================================
+	//
+	function getPageSize() {
+		var value = cache.get("pagesize");
+		if(value==undefined || value==null) value = 1; //0=10. 1=50. 2=100
+		return value;
+	};
+
+	//==================================================================
+	//
+	function setPageSize(value) {
+		cache.set("pagesize",value);
 	};	
+
 	return {
-		init: init, getDisplayPref:getDisplayPref, setDisplayPref:setDisplayPref, getSort:getSort, setSort:setSort, getQuery:getQuery, setQuery:setQuery, setFields:setFields, getFields:getFields
+		init: init, getPageSize:getPageSize, setPageSize:setPageSize, getDisplayPref:getDisplayPref, setDisplayPref:setDisplayPref, getSort:getSort, setSort:setSort, getQuery:getQuery, setQuery:setQuery, setFields:setFields, getFields:getFields
 	};
 }]); //end factory and module

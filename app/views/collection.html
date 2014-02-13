@@ -8,18 +8,33 @@
 	</div>
 	<span ng-show="db.stats.collections!=undefined">{{collections.length | number:0}} Collections</span>
 </div>
-<div class="col-md-10">
+<div class="col-md-10" ng-show="allCollections[selectedDB]!=undefined && collection==undefined">
+	<h3>Collection Not Found</h3>
+	<p>Sorry, there is no collection nammed {{selectedCol}} in this database.</p>
+</div>
+<div class="col-md-10" ng-show="allCollections[selectedDB]==undefined && collection==undefined">
+	<i class='fa fa-spinner fa-spin'></i> Loading...
+</div>
+<div class="col-md-10" ng-hide="collection==undefined">
 
 	<ul class="nav nav-pills pull-right">
 		<li ng-class="{active:tab==0}"><a ng-click="tab=0">Documents</a></li>
 		<li ng-class="{active:tab==1}"><a ng-click="tab=1">Indexes</a></li>
 		<li ng-class="{active:tab==2}"><a ng-click="tab=2">Stats</a></li>
+		<li ng-class="{active:tab==3}"><a ng-click="tab=3">Actions</a></li>
 	</ul>
 	<h3>{{selectedCol}}</h3>
 	<br class="clearfix"/>
 
+	<div ng-show="tab==3" class="panel panel-primary">
+		<div class="panel-heading"><b>Actions</b></div>
+		<div class="panel-body">
+			<button class="btn btn-danger" ng-click="deleteCollection()">Delete Collection</button>
+		</div>
+	</div>
+
 	<div ng-show="tab==2" class="panel panel-primary">
-		<div class="panel-heading"><b>Stats</b><a href="#/db/{{selectedDB}}/{{selectedCol}}" ng-click="tab2details=true" class="pull-right">Show raw stats</a></div>
+		<div class="panel-heading"><b>Stats</b><a href="#/db/{{selectedDB}}/{{selectedCol}}" ng-hide="tab2details" ng-click="tab2details=true" class="pull-right">Show raw stats</a></div>
 		<table ng-show="tab==2" class="table table-striped table-bordered greyth small table-condensed">
 			<thead>
 				<tr>
@@ -49,6 +64,7 @@
 		</table>
 		<div class="panel-footer" ng-show="tab2details"><b>collStats:</b> {{collection.stats | json}}<br /><b>system.namespaces.options: </b> {{collection.namespace | json}}</div>
 	</div>
+
 	<div ng-show="tab==1" class="panel panel-primary">
 		<div class="panel-heading"><b>Indexes</b></div>
 		<table class="table table-striped table-bordered greyth small table-condensed">
@@ -118,7 +134,13 @@
 		<button type="submit" id="search" class="btn btn-default btn-info btn-sm" ng-click="search()">Search</button>
 		</form>
 		</div>	
-		<div class="panel-footer" ng-hide="error || documents==undefined || documents==[]">Query found {{ explain.matches }} documents in {{ explain.time }}ms. It scanned {{ explain.scanned }} documents using index "{{ explain.index }}".</div>
+		<div class="panel-footer" ng-hide="error || documents==undefined || documents==[]">
+			<a href="#/db/{{selectedDB}}/{{selectedCol}}" ng-hide="rawexplain" ng-click="rawexplain=true" class="pull-right">Explain</a>
+			Query found {{ explain.matches }} documents in {{ explain.time }}ms. It scanned {{ explain.scanned }} documents using index "{{ explain.index }}".
+		</div>
+		<div class="panel-footer" ng-show="rawexplain">
+			<b>Explain: </b>{{ explain | json }}
+		</div>
 		<div class="panel-footer error" ng-show="error">{{error }}</div>
 	
 

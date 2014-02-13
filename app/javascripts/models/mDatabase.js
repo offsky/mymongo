@@ -172,6 +172,24 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 	};
 
 	//==================================================================
+	// Deletes a collection from this db 
+	function deleteCollection(dbname,name) {
+		console.log("deleteCollection",dbname,name);
+		if(name==undefined) return;
+		if(dbname==undefined) return;
+
+		$rootScope.allCollections[dbname]=undefined;
+
+		$http.post(apiPath + '/collection_remove.php','db='+dbname+'&col='+name, {'headers': {'Content-Type': 'application/x-www-form-urlencoded'}})
+			.success(function(data) {
+				getCollections(dbname);
+			})
+			.error(function(data) {
+				console.log("ERROR deleting collection",data);
+			});
+	};
+
+	//==================================================================
 	// Gets indexes for this db and collection
 	function getIndexes(dbname,collection) {
 		console.log("getIndexes",dbname,collection);
@@ -309,6 +327,6 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 	}
 
 	return {
-		init: init, get: get, getCollections:getCollections, addCollection:addCollection, getIndexes:getIndexes, getUsers:getUsers, deleteIndex:deleteIndex, addIndex:addIndex, getDocuments:getDocuments, getTableHeadings:getTableHeadings, getDocument:getDocument, deleteDocument:deleteDocument
+		init: init, get: get, getCollections:getCollections, addCollection:addCollection, deleteCollection:deleteCollection, getIndexes:getIndexes, getUsers:getUsers, deleteIndex:deleteIndex, addIndex:addIndex, getDocuments:getDocuments, getTableHeadings:getTableHeadings, getDocument:getDocument, deleteDocument:deleteDocument
 	};
 }]); //end factory and module
