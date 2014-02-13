@@ -244,15 +244,59 @@ class mymongo {
 		if($this->db==null) return null; //we never got connected
 		
 		$result = array();
-		$collections = $this->db->listCollections();
-		foreach ($collections as $c) {
-			$name = $c->getName();
-			if($name!==$ignore) { //hide one collection
-				$stats = $this->db->command(array("collStats"=>$name));
-				$result[] = array('name'=>$name,'stats'=>$stats);
+		
+		try {
+			//get namespaces, which we need to see size of capped collections
+			$collection = $this->db->selectCollection("system.namespaces");
+			$namespaces = array();
+			$cursor = $collection->find(array());
+			while($row = $cursor->getNext()) {
+				if(!empty($row['options'])) $namespaces[$row['name']] = $row['options'];
+				else $namespaces[$row['name']]=null;
 			}
-		}
+
+			$collections = $this->db->listCollections();
+			foreach ($collections as $c) {
+				$name = $c->getName();
+				if($name!==$ignore) { //hide one collection
+					$stats = $this->db->command(array("collStats"=>$name));
+					$result[] = array('name'=>$name,'stats'=>$stats,'namespace'=>$namespaces[$this->MyDB.".".$name]);
+				}
+			}
+
+		} catch(MongoException $e) {
+			$this->log_db_error("listCollections",$this->MyTable,$e->getMessage(),$e->getCode());
+			return null;
+		} 
+
 		return $result;
+	}
+
+/* ADDCOLLECTION ============================================================================
+	Adds a new collection to the database
+*/
+	public function addCollection($name,$capped,$size,$max) {
+		if($this->db==null) return false; //we never got connected
+		if(empty($name)) return false;
+
+		$options = array();
+		if($capped==1 && $size>0) {
+			$options['capped'] = true;
+			$options['size'] = intval($size);
+			if(!empty($max)) $options['max'] = intval($max);		
+		}
+
+		try {
+			$result = $this->db->createCollection($name,$options);
+		} catch(MongoException $e) {
+			$this->log_db_error("addCollection",$name,$e->getMessage(),$e->getCode());
+			return false;
+		}
+
+		//TODO: there does not currently seem to be a way to detect if it failed to create the collection
+
+		return true;
+
 	}
 
 /* INSERT ================================================================================

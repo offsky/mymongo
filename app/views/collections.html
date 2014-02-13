@@ -48,7 +48,7 @@
 		<thead>
 			<tr>
 				<th>Collection <b class="caret"></b></th>
-				<th class="text-right">Count</th>
+				<th class="text-right">Doc Count</th>
 				<th class="text-right">Size</th>
 				<th class="text-right"><span class="hastip" tooltip="The average size of each document." tooltip-placement="bottom">AvgObjSize</span></th>
 				<th class="text-right"><span class="hastip" tooltip="The total amount of space allocated to this collection for document storage." tooltip-placement="bottom">StorageSize</span></th>
@@ -72,6 +72,40 @@
 		</tbody>
 	</table>
 	<div class="panel-footer" ng-show="db.stats.collections!=undefined">{{collections.length | number:0}} Collections</div>
+	</div>
+
+	<br />
+	<button type="button" class="btn btn-default" ng-hide="showAddCollection" ng-click="showAddCollection=true">New Collection</button>
+	<div class="panel panel-success" ng-show="showAddCollection">
+	<div class="panel-heading"><b>Create Collection</b></div>
+	<div class="panel-body">
+		<form class="form-horizontal" role="form" ng-submit="addCollection()">
+		<div class="form-group">
+			<label for="addCollectionName" class="col-sm-2 control-label">Name</label>
+			<div class="col-sm-10 input-group-sm"><input type="text" class="form-control" id="addCollectionName" ng-model="addCollectionName" placeholder="Name"></div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-sm-10">
+				<div class="checkbox"><label><input type="checkbox" value="1" ng-model="addCollectionCapped"> Capped Collection</label></div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="addCollectionSize" class="col-sm-2 control-label">Max Size</label>
+			<div class="col-sm-9 input-group-sm"><input type="text" ng-disabled="!addCollectionCapped" class="form-control" id="addCollectionSize" ng-model="addCollectionSize" placeholder="1000"></div>
+			<div class="col-sm-1">bytes</div>
+		</div>
+		<div class="form-group">
+			<label for="addCollectionMax" class="col-sm-2 control-label">Max Docs</label>
+			<div class="col-sm-9 input-group-sm"><input type="text" ng-disabled="!addCollectionCapped" class="form-control" id="addCollectionMax" ng-model="addCollectionMax" placeholder="1000"></div>
+			<div class="col-sm-1">docs</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-sm-10">
+			<button type="submit" class="btn btn-primary">Create</button>
+			</div>
+		</div>
+		</form>
+	
 	</div>
 </div>
 

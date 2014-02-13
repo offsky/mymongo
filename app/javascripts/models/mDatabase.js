@@ -151,6 +151,27 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 	};
 
 	//==================================================================
+	// Adds a collection to this db 
+	function addCollection(dbname,name,capped,size,max) {
+		console.log("addCollections",dbname,name,capped,size,max);
+		if(name==undefined) return;
+		if(dbname==undefined) return;
+		
+		if(capped==undefined) capped=0; else capped=1;
+		if(size==undefined) size=0;
+		if(max==undefined) max=0;
+
+		$http.post(apiPath + '/collection_add.php','db='+dbname+'&name='+name+'&capped='+capped+'&size='+size+'&max='+max, {'headers': {'Content-Type': 'application/x-www-form-urlencoded'}})
+			.success(function(data) {
+				$rootScope.allCollections[dbname]=undefined;
+				getCollections(dbname);
+			})
+			.error(function(data) {
+				console.log("ERROR adding collection",data);
+			});
+	};
+
+	//==================================================================
 	// Gets indexes for this db and collection
 	function getIndexes(dbname,collection) {
 		console.log("getIndexes",dbname,collection);
@@ -288,6 +309,6 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 	}
 
 	return {
-		init: init, get: get, getCollections:getCollections, getIndexes:getIndexes, getUsers:getUsers, deleteIndex:deleteIndex, addIndex:addIndex, getDocuments:getDocuments, getTableHeadings:getTableHeadings, getDocument:getDocument, deleteDocument:deleteDocument
+		init: init, get: get, getCollections:getCollections, addCollection:addCollection, getIndexes:getIndexes, getUsers:getUsers, deleteIndex:deleteIndex, addIndex:addIndex, getDocuments:getDocuments, getTableHeadings:getTableHeadings, getDocument:getDocument, deleteDocument:deleteDocument
 	};
 }]); //end factory and module

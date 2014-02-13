@@ -24,6 +24,14 @@ angular.module('phpMongoAdmin.filters', [])
 	}
 })
 
+//displays a boolean value
+.filter('bool', function() {
+	return function(value) {
+		if(value===true) return "true";
+		return "false";
+	}
+})
+
 //Translates the profileLevel setting
 //http://docs.mongodb.org/manual/tutorial/manage-the-database-profiler/
 .filter('profileLevel', function() {

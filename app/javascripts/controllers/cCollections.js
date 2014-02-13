@@ -37,14 +37,25 @@ angular.module('phpMongoAdmin').controller('cCollections', ['$scope', '$rootScop
 		$scope.update();
 	});
 
-
+	//==================================================================
+	//
 	$scope.update = function() {
 		console.log("cCollections update");
 		$rootScope.pagetitle = $rootScope.selectedDB;
 
 		$scope.db = Database.get($rootScope.selectedDB);
 		$scope.collections = Database.getCollections($rootScope.selectedDB);
-	}
+	};
+
+	//==================================================================
+	// Collects the options for adding the collection and sends to model
+	$scope.addCollection = function() {
+		if($scope.addCollectionName==undefined || $scope.addCollectionName=="") return;
+		Database.addCollection($rootScope.selectedDB,$scope.addCollectionName,$scope.addCollectionCapped,$scope.addCollectionSize,$scope.addCollectionMax);
+		
+		$scope.showAddCollection = false;
+		$scope.addCollectionName = "";
+	};
 
 }]);
 
