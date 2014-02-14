@@ -766,7 +766,7 @@ class mymongo {
 		
 		try {
 			$rows = array();
-			$cursor = $collection->find(array());
+			$cursor = $collection->find(array(),array("user"=>1,"readOnly"=>1));
 			while($row = $cursor->getNext()) {
 				$rows[] = $row;
 			}
@@ -787,7 +787,7 @@ class mymongo {
 	Creates an index on the collection
 	$index = array of keys with 1/-1 for direction Ex: array("c"=>1,"u"=>1,"k"=>1)
 */
-	public function ensureIndex($index,$name=null,$unique=false) {
+	public function ensureIndex($index,$name=null,$unique=false,$background=true,$dropdups=false,$sparse=false) {
 		$start = microtime(true);
 		
 		if($this->db==null) return null; //we never got connected
@@ -795,7 +795,7 @@ class mymongo {
 		
 		$collection = $this->db->selectCollection($this->MyTable);
 		
-		$data = array("background"=>true,"safe"=>true,"w"=>1, "unique" => $unique);
+		$data = array("background"=>$background,"safe"=>true,"w"=>1, "unique" => $unique, "dropDups"=>$dropdups, "sparse"=>$sparse);
 		if(!empty($name)) $data['name'] = $name;
 
 		try {

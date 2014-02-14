@@ -9,6 +9,7 @@ angular.module('phpMongoAdmin').controller('cCollections', ['$scope', '$rootScop
 	$scope.db = null;
 	$scope.collections = null;
 	$scope.users = [];
+	$scope.tab = 0;
 
 	//==================================================================
 	// Called each time the view is loaded or reloaded

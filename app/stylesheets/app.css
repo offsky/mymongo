@@ -30,13 +30,15 @@ h2, h3 { margin-top:2px;}
 .sidebar { overflow:hidden;  text-overflow: ellipsis;}
 .sidebar .badge { font-weight: 200; font-size:0.7em;}
 .sidebar .list-group-item { padding: 10px 6px;}
-.sidebar .host { color:#999; font-size:0.85em; white-space: nowrap;}
 .sidebar h3 { margin-bottom:3px;}
 
 /* Home */
 .vDatabases td i.host { color:#999; margin-left: 20px;}
 
 /* Collection */
+.vCollections h3 { margin-bottom:0px;}
+.vCollections .host { color:#999; font-size:0.85em; margin-bottom:10px; display:inline-block; white-space: nowrap;}
+
 .container { max-width: none; }
 
 .nav-pills li { cursor: pointer;}
@@ -59,6 +61,7 @@ input#explain { margin-left:20px; display:inline-block;}
 button#search { margin-left:50px; display:inline-block;}
 
 .panel-footer.error { background: #fee; color: #300;}
+
 /* Document */
 .json { color:#999; }
 .json .string { color: #1e796e; }

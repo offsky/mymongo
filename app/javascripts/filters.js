@@ -27,8 +27,8 @@ angular.module('phpMongoAdmin.filters', [])
 //displays a boolean value
 .filter('bool', function() {
 	return function(value) {
-		if(value===true) return "true";
-		return "false";
+		if(value===true) return "<i class='fa fa-check'></i>";
+		return "-";
 	}
 })
 

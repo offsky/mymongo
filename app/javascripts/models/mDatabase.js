@@ -211,12 +211,12 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 
 	//==================================================================
 	// Adds one index
-	function addIndex(dbname,collection,name,index) {
+	function addIndex(dbname,collection,name,index,unique,background,dropdups,sparse) {
 		if(!index) return;
 		
 		console.log("addIndex",dbname,collection,name,index);
 
-		$http.post(apiPath + '/index_add.php','db='+dbname+'&col='+collection+'&name='+name+'&index='+index, {'headers': {'Content-Type': 'application/x-www-form-urlencoded'}})
+		$http.post(apiPath + '/index_add.php','db='+dbname+'&col='+collection+'&name='+name+'&index='+index+'&unique='+unique+'&background='+background+'&dropdups='+dropdups+'&sparse='+sparse, {'headers': {'Content-Type': 'application/x-www-form-urlencoded'}})
 			.success(function(data) {
 				console.log("added indexes",data);
 

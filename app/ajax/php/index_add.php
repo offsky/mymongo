@@ -9,11 +9,21 @@ $db = findDB($_POST['db']);
 $m = new mymongo($db['hosts'],$db['user'],$db['password'],$db['name'],$db['replicaSet'],$db['ssl']);
 $m->changeTable($_POST['col']);
 
-//add index
 $index = json_decode($_POST['index']);
-if(!empty($index)) {
 
-	$success = $m->ensureIndex($index,$_POST['name']);
+$unique = false;
+$background = false;
+$dropdups = false;
+$sparse = false;
+
+if(!empty($_POST['unique']) && $_POST['unique']=="true") $unique = true;
+if(!empty($_POST['background']) && $_POST['background']=="true") $background = true;
+if(!empty($_POST['dropdups']) && $_POST['dropdups']=="true") $dropdups = true;
+if(!empty($_POST['sparse']) && $_POST['sparse']=="true") $sparse = true;
+
+//add index
+if(!empty($index)) {
+	$success = $m->ensureIndex($index,$_POST['name'],$unique,$background,$dropdups,$sparse);
 	if($success) echo 1; else echo 0;
 } else {
 	echo 0;

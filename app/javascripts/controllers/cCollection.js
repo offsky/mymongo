@@ -16,10 +16,11 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 	$scope.pageSize = $scope.pageSizeOptions[1]; //records per page
 
 	$scope.maxSize = 20; //number of pages to show in page bar
-	$scope.tab = 0; //0= documents, 1=indexes, 2=stats
+	$scope.tab = 1; //0= documents, 1=indexes, 2=stats
 	$scope.tab2details = false; //to show the raw collection stats
 	$scope.displayMode = 2;
 	$scope.tableHeadings = [];
+	$scope.i_back = true; //should default to background creation indexes
 
 	$scope.query = "";
 	$scope.fields = "";
@@ -136,7 +137,7 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 	//==================================================================
 	//
 	$scope.addIndex = function(index) {
-		Database.addIndex($rootScope.selectedDB,$rootScope.selectedCol,$scope.i_name,$scope.i_index);		
+		Database.addIndex($rootScope.selectedDB,$rootScope.selectedCol,$scope.i_name,$scope.i_index,$scope.i_unique,$scope.i_back,$scope.i_drop,$scope.i_sparse);		
 	};
 
 	//==================================================================
