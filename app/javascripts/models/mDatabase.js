@@ -326,7 +326,18 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 		return promise;
 	}
 
+	//==================================================================
+	// Runs a performance test on the db in the admin Collection
+	function runPerformance(dbname) {
+		var promise = $http.get(apiPath + '/performance.php?db='+dbname)
+			.error(function(data) {
+				console.log("ERROR doing performance",data);
+			});
+		return promise;
+	};
+
+
 	return {
-		init: init, get: get, getCollections:getCollections, addCollection:addCollection, deleteCollection:deleteCollection, getIndexes:getIndexes, getUsers:getUsers, deleteIndex:deleteIndex, addIndex:addIndex, getDocuments:getDocuments, getTableHeadings:getTableHeadings, getDocument:getDocument, deleteDocument:deleteDocument
+		init: init, get: get, runPerformance:runPerformance, getCollections:getCollections, addCollection:addCollection, deleteCollection:deleteCollection, getIndexes:getIndexes, getUsers:getUsers, deleteIndex:deleteIndex, addIndex:addIndex, getDocuments:getDocuments, getTableHeadings:getTableHeadings, getDocument:getDocument, deleteDocument:deleteDocument
 	};
 }]); //end factory and module

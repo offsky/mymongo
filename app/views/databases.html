@@ -18,7 +18,7 @@
 		<tr ng-show="databases && databases.length==0"><td colspan="6"><i class='fa fa-exclamation-triangle'></i> No databases are configured in config.php.  Please look at php/config_template.php for an example config file. Make a copy of this and rename it config.php and then put your Mongo DB credentials inside.</td></tr>
 		<tr ng-repeat="db in databases">
 			<td><a href="#/db/{{db.name}}">{{db.name}}</a> <i class="host">{{db.hosts | noport}}</i></td>
-			<td ng-bind-html="db.stats.collections | number"></td>
+			<td><span ng-hide="db.stats.raw" ng-bind-html="db.stats.collections | number"></span><span ng-show="db.stats.raw" >Sharded</span></td>
 			<td ng-bind-html="db.stats.objects | number"></td>
 			<td ng-bind-html="db.stats.fileSize | bytes:1"></td>
 			<td ng-bind-html="db.info.version | nullspin"></td>

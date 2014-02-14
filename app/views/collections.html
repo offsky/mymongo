@@ -15,6 +15,9 @@
 		<div class="panel-heading"><b>Actions</b></div>
 		<div class="panel-body">
 
+			<button ng-hide="runningPerf" class="btn btn-info" ng-click="performance()">Run Performance Test</button>
+			<span ng-show="runningPerf"><i class='fa fa-spinner fa-spin'></i> Running...</span>
+			<span ng-show="testResults">{{ testResults }} sec</span>
 		</div>
 	</div>
 
@@ -41,7 +44,7 @@
 
 		<div class="panel-footer" ng-show="tab2details"><b>buildinfo:</b> {{db.info | json}}<br /><b>dbStats: </b> {{db.stats | json}}</div>
 	</div>
-
+ 
 	<div ng-show="tab==1" class="panel panel-primary">
 		<div class="panel-heading"><b>Users</b></div>
 		

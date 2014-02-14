@@ -36,7 +36,7 @@ angular.module('phpMongoAdmin.filters', [])
 //http://docs.mongodb.org/manual/tutorial/manage-the-database-profiler/
 .filter('profileLevel', function() {
 	return function(value) {
-		if(value==null || value==undefined) return "<i class='fa fa-spinner fa-spin'></i>";
+		if(value==null || value==undefined) return "?";
 		if(value==0) return "off";
 		else if(value==1) return "on >100ms";
 		else if(value==2) return "on all";

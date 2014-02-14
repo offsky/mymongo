@@ -58,5 +58,17 @@ angular.module('phpMongoAdmin').controller('cCollections', ['$scope', '$rootScop
 		$scope.addCollectionName = "";
 	};
 
+	//==================================================================
+	// 
+	$scope.performance = function() {
+		$scope.runningPerf = true;
+		var promise = Database.runPerformance($rootScope.selectedDB);
+		promise.then(function(data) {
+			var time = data.data;
+			$scope.runningPerf = false;
+			$scope.testResults = time;
+		});
+	}
+
 }]);
 
