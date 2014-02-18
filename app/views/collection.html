@@ -168,7 +168,7 @@
 	</div>
 
 	<span ng-hide="documents==undefined || documents==[] || pageSize.name>documents.length">
-		<pagination total-items="explain.matches" page="page" max-size="maxSize" items-per-page="pageSize.name" class="pagination-sm" boundary-links="true" rotate="true" num-pages="numPages" on-select-page="selectPage(page)"></pagination>
+		<pagination total-items="nolimit" page="page" max-size="maxSize" items-per-page="pageSize.name" class="pagination-sm" boundary-links="true" rotate="true" num-pages="numPages" on-select-page="selectPage(page)"></pagination>
 	   <pre>Page: {{page}} / {{numPages}} <span class="pull-right">docs per page:<select ng-model="pageSize" ng-change="update();" ng-options="n.name for n in pageSizeOptions"></select></span></pre>
 	</span>
 

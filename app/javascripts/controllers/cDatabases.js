@@ -15,5 +15,9 @@ angular.module('phpMongoAdmin').controller('cDatabases', ['$scope', '$rootScope'
 		console.log("cDatabases Init");
 	};
 
+	$scope.healthagain = function(db) {
+		db.health=null;
+		Database.getHealthcheck(db.name);
+	};
 }]);
 

@@ -463,12 +463,15 @@ class mymongo {
 	The fields(comma separated string) specified will be returned or all fields if not
 	sort is an array('age' => -1, 'date' => 1)
 */
-	public function find($query,$fields = array(),$sort=null,$limit=0,$timeout=2000) {
+	public function find($query,$fields = array(),$sort=null,$limit=0,$timeout=2000,$skip=0) {
 		$this->log_db_mark("STARTING FIND");
 		$start = microtime(true);
 		
 		if($this->db==null) return null; //we never got connected
 		
+		$skip = intval($skip);
+		$limit = intval($limit);
+
 		$collection = $this->db->selectCollection($this->MyTable);
 		
 		if(is_string($fields)) { 
@@ -477,6 +480,7 @@ class mymongo {
 		try {
 			$cursor = $collection->find($query,$fields)->timeout($timeout);
 			if(!empty($sort)) $cursor->sort($sort);
+			if(!empty($skip)) $cursor->skip($skip);
 			if(!empty($limit)) $cursor->limit($limit);
 		
 		} catch(MongoException $e) {

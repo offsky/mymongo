@@ -22,7 +22,7 @@
 			<td ng-bind-html="db.stats.objects | number"></td>
 			<td ng-bind-html="db.stats.fileSize | bytes:1"></td>
 			<td ng-bind-html="db.info.version | nullspin"></td>
-			<td ng-bind-html="db.health | healthDecode"></td>
+			<td><a class="health h{{db.health}}" ng-bind-html="db.health | healthDecode" ng-click="healthagain(db)"></a></td>
 		</tr>
 		</tbody>
 	</table>

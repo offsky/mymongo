@@ -8,7 +8,7 @@
 	$MYMONGO[0]['name'] = "dbName";
 	$MYMONGO[0]['user'] = "dbUser";
 	$MYMONGO[0]['password'] = "password";
-	$MYMONGO[0]['replicaSet'] = false;
+	$MYMONGO[0]['replicaSet'] = null; //the name of the replica set
 	$MYMONGO[0]['ssl'] = false;
 	$MYMONGO[0]['adminCollection'] = "healthcheck"; // a collection that will be created and used for this tool to function perfectly
 	
@@ -17,7 +17,7 @@
 	// $MYMONGO[1]['name'] = "dbName2";
 	// $MYMONGO[1]['user'] = "dbUser2";
 	// $MYMONGO[1]['password'] = "password";
-	// $MYMONGO[1]['replicaSet'] = false;
+	// $MYMONGO[1]['replicaSet'] = null;
 	// $MYMONGO[1]['ssl'] = false;
 	// $MYMONGO[1]['adminCollection'] = "healthcheck";
 

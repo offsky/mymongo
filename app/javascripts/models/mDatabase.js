@@ -126,7 +126,10 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 	function getCollections(dbname) {
 		console.log("getCollections",dbname,$rootScope.databases);
 
+		//if I have the the collection cached this session return it
 		if($rootScope.allCollections[dbname]!=undefined) return $rootScope.allCollections[dbname];
+		
+		//otherwise we need to refresh from server
 
 		$http.get(apiPath + '/collections.php?db='+dbname)
 			.success(function(data) {
@@ -143,11 +146,16 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 				$rootScope.allIndexes[dbname] = {};
 				//console.log("Collections Got");
 				//console.log(data);
+				cache.set('cs'+dbname,data);
+
 				$rootScope.$broadcast('update_collections');
 			})
 			.error(function(data) {
 				console.log("ERROR FETCHING collections",data);
 			});
+
+		//but return old cached version temporarily
+		return cache.get('cs'+dbname);
 	};
 
 	//==================================================================
@@ -265,6 +273,7 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 				$rootScope.documents = data.docs;
 				$rootScope.explain = data.explain;
 				$rootScope.error = data.error;
+				$rootScope.nolimit = data.nolimit;
 				console.log("docs Got");
 				console.log(data);
 				$rootScope.$broadcast('update_docs');
@@ -338,6 +347,6 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 
 
 	return {
-		init: init, get: get, runPerformance:runPerformance, getCollections:getCollections, addCollection:addCollection, deleteCollection:deleteCollection, getIndexes:getIndexes, getUsers:getUsers, deleteIndex:deleteIndex, addIndex:addIndex, getDocuments:getDocuments, getTableHeadings:getTableHeadings, getDocument:getDocument, deleteDocument:deleteDocument
+		init: init, get: get, runPerformance:runPerformance, getCollections:getCollections, addCollection:addCollection, getHealthcheck:getHealthcheck, deleteCollection:deleteCollection, getIndexes:getIndexes, getUsers:getUsers, deleteIndex:deleteIndex, addIndex:addIndex, getDocuments:getDocuments, getTableHeadings:getTableHeadings, getDocument:getDocument, deleteDocument:deleteDocument
 	};
 }]); //end factory and module

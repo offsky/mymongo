@@ -36,7 +36,7 @@ $error = null;
 $explain = null;
 
 //do the query
-$cursor = $m->find($query,$fields,$sort);
+$cursor = $m->find($query,$fields,$sort,$num,2000,$skip);
 if($cursor==null) $error = $m->lastErrMsg;
 
 //get the explain
@@ -45,19 +45,17 @@ if($cursor!==null) {
 	if($explain==null) $error = $m->lastErrMsg;
 }
 
-//do the skip
-if(!empty($skip) && $cursor!=null) $m->skip($cursor,$skip);
+$count = $m->count($query);
 
 $docs = array();
 if($cursor!==null) {
-	while(($doc = $m->getNext($cursor)) && $num) {
+	while($doc = $m->getNext($cursor)) {
 		if($doc==-1) break; //Mongo connection error
 		if(empty($doc['_id'])) break; //Mongo error
-		$doc = private_transformation_read($doc); //in config.php
+		$doc = private_transformation_read($_GET['db'],$_GET['col'],$doc); //in config.php
 		$docs[] = $doc;
-		$num--;
 	}
 }
-echo json_encode(array("docs"=>$docs,"explain"=>$explain,"error"=>$error));
+echo json_encode(array("docs"=>$docs,"explain"=>$explain,"error"=>$error,"nolimit"=>$count));
 
 ?>
