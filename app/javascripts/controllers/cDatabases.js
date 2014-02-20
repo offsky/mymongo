@@ -12,6 +12,7 @@ angular.module('phpMongoAdmin').controller('cDatabases', ['$scope', '$rootScope'
 	$scope.init = function() {
 		$rootScope.selectedDB = "";
 		$rootScope.pagetitle = " Databases";
+		Database.doHealthcheck();
 		console.log("cDatabases Init");
 	};
 

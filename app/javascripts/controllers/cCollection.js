@@ -142,6 +142,13 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 
 	//==================================================================
 	//
+	$scope.explainQuery = function() {
+		$scope.rawexplain=true; 
+		Database.explainQuery($rootScope.selectedDB,$rootScope.selectedCol,$scope.query,$scope.fields,$scope.sort);
+	};
+
+	//==================================================================
+	//
 	$scope.deleteCollection = function(index) {
 		var result = prompt("Are you sure you want to DELETE this entire collection? If yes, please enter the name of the collection to confirm.");
 		if(result==$rootScope.selectedCol) {
