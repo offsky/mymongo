@@ -35,6 +35,9 @@ $skip = $page*$num;
 $error = null;
 $explain = null;
 
+
+error_log(json_encode($query));
+
 //do the query
 $cursor = $m->find($query,$fields,$sort,$num,2000,$skip);
 if($cursor==null) $error = $m->lastErrMsg;
