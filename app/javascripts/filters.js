@@ -10,9 +10,22 @@ angular.module('phpMongoAdmin.filters', [])
 		if (!nospinner && (bytes==null || bytes==undefined)) return "<i class='fa fa-spinner fa-spin'></i>";
 		if (bytes==0 || isNaN(parseFloat(bytes)) || !isFinite(bytes)) return '-';
 		if (typeof precision === 'undefined') precision = 1;
-		var units = ['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'],
-			number = Math.floor(Math.log(bytes) / Math.log(1024));
+		var units = ['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'];
+		var number = Math.floor(Math.log(bytes) / Math.log(1024));
 		return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) +  ' ' + units[number];
+	}
+})
+
+//Displays duration prettily 
+.filter('duration', function() {
+	return function(milliseconds, precision, nospinner) {
+		if (!nospinner && (milliseconds==null || milliseconds==undefined)) return "<i class='fa fa-spinner fa-spin'></i>";
+		if (isNaN(parseFloat(milliseconds)) || !isFinite(milliseconds)) return '-';
+		if (typeof precision === 'undefined') precision = 1;
+
+		if(milliseconds<1000) return milliseconds+" ms";
+		if(milliseconds<60000) return (milliseconds/1000).toFixed(precision)+" sec";
+		return (milliseconds/60000).toFixed(precision)+" min";
 	}
 })
 

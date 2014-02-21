@@ -289,7 +289,7 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 				console.log("ERROR FETCHING docs",data);
 			});
 
-		getCount(dbname,collection,query);
+		explainQuery(dbname,collection,query,fields,sort);
 	};
 
 	//==================================================================
@@ -315,10 +315,7 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 	//==================================================================
 	// Gets explaination for this query on the db and collection
 	function explainQuery(dbname,collection,query,fields,sort) {
-		query = "{"+query+"}";		
-		fields = "{"+fields+"}";		
-		sort = "{"+sort+"}";		
-
+		
 		console.log("explainQuery",dbname,collection,query,fields,sort);
 		
 		$rootScope.explainFull = undefined;
@@ -327,6 +324,7 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 			.success(function(data) {
 				$rootScope.explainFull = data.explain;
 				$rootScope.error = data.error;
+				$rootScope.nolimit = parseInt(data.explain.matches);
 				console.log("explain Got");
 				console.log(data);
 				$rootScope.$broadcast('update_docs');

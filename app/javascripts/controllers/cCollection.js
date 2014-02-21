@@ -120,7 +120,6 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 	$scope.search = function() {
 		console.log("search",$scope.query);
 
-		$scope.rawexplain = false;
 		Settings.setQuery($rootScope.selectedDB,$rootScope.selectedCol,$scope.query);	
 		Settings.setFields($rootScope.selectedDB,$rootScope.selectedCol,$scope.fields);	
 		Settings.setSort($rootScope.selectedDB,$rootScope.selectedCol,$scope.sort);	
@@ -138,13 +137,6 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 	//
 	$scope.addIndex = function(index) {
 		Database.addIndex($rootScope.selectedDB,$rootScope.selectedCol,$scope.i_name,$scope.i_index,$scope.i_unique,$scope.i_back,$scope.i_drop,$scope.i_sparse);		
-	};
-
-	//==================================================================
-	//
-	$scope.explainQuery = function() {
-		$scope.rawexplain=true; 
-		Database.explainQuery($rootScope.selectedDB,$rootScope.selectedCol,$scope.query,$scope.fields,$scope.sort);
 	};
 
 	//==================================================================
