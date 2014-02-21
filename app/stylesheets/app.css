@@ -35,7 +35,7 @@ h2, h3 { margin-top:2px;}
 /* Home */
 .vDatabases td i.host { color:#999; margin-left: 20px;}
 .vDatabases a.health { color:#900; cursor:pointer;}
-.vDatabases a.health.h0 { color: #090;}
+.vDatabases a.health.hh0 { color: #090;}
 
 /* Collection */
 .vCollections h3 { margin-bottom:0px;}
