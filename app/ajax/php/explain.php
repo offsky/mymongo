@@ -23,23 +23,11 @@ if(empty($fields)) $fields = array();
 if(!empty($_GET['sort'])) $sort = json_decode($_GET['sort']);
 if(empty($sort)) $sort = array();
 
-//parse num
-if(!empty($_GET['num'])) $num = intval($_GET['num']);
-if(empty($num)) $num = 50;
-
-//parse page
-if(!empty($_GET['page'])) $page = intval($_GET['page']);
-if(empty($page)) $page = 0;
-$skip = $page*$num;
-
 $error = null;
 $explain = null;
 
-
-error_log(json_encode($query));
-
 //do the query
-$cursor = $m->find($query,$fields,$sort,$num,2000,$skip);
+$cursor = $m->find($query,$fields,$sort);
 if($cursor==null) $error = $m->lastErrMsg;
 
 //get the explain
@@ -48,15 +36,6 @@ if($cursor!==null) {
 	if($explain==null) $error = $m->lastErrMsg;
 }
 
-$docs = array();
-if($cursor!==null) {
-	while($doc = $m->getNext($cursor)) {
-		if($doc==-1) break; //Mongo connection error
-		if(empty($doc['_id'])) break; //Mongo error
-		$doc = private_transformation_read($_GET['db'],$_GET['col'],$doc); //in config.php
-		$docs[] = $doc;
-	}
-}
-echo json_encode(array("docs"=>$docs,"explain"=>$explain,"error"=>$error));
+echo json_encode(array("explain"=>$explain,"error"=>$error));
 
 ?>

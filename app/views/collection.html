@@ -39,9 +39,9 @@
 			<thead>
 				<tr>
 					<th>Count</th>
-					<th>Size</th>
+					<th><span class="hastip" tooltip="The actual size of the collection." tooltip-placement="right">Size</span></th>
 					<th><span class="hastip" tooltip="The average size of each document." tooltip-placement="right">AvgObjSize</span></th>
-					<th><span class="hastip" tooltip="The total amount of space allocated to this collection for document storage." tooltip-placement="bottom">StorageSize</span></th>
+					<th><span class="hastip" tooltip="The total amount of space (pre)allocated to this collection for document storage." tooltip-placement="bottom">StorageSize</span></th>
 					<th>Indexes</th>
 					<th><span class="hastip" tooltip="The total size of all indexes created on this collection." tooltip-placement="bottom">IndexSize</span></th>
 					<th><span class="hastip" tooltip="The max size of the collection, if the collection is capped." tooltip-placement="bottom">Capped</span></th>
@@ -133,11 +133,12 @@
 		</form>
 		</div>	
 		<div class="panel-footer" ng-hide="error || documents==undefined || documents==[]">
-			<a href="#/db/{{selectedDB}}/{{selectedCol}}" ng-hide="rawexplain" ng-click="rawexplain=true" class="pull-right">Explain</a>
-			Query found {{ explain.matches }} documents in {{ explain.time }}ms. It scanned {{ explain.scanned }} documents using index "{{ explain.index }}".
+			<a href="#/db/{{selectedDB}}/{{selectedCol}}" ng-hide="rawexplain" ng-click="explainQuery()" class="pull-right">Explain</a>
+			Query found {{ explain.matches }} documents in {{ explain.time }}ms. It scanned {{ explain.scanned }} documents using index "{{ explain.index }}". <span ng-hide="nolimit">Calculating total documents <i class='fa fa-spinner fa-spin'></i> </span><span ng-show="nolimit">{{ nolimit |number }} documents total match this query.</span>
 		</div>
 		<div class="panel-footer" ng-show="rawexplain">
-			<b>Explain: </b>{{ explain | json }}
+			<span ng-hide="explainFull"><i class='fa fa-spinner fa-spin'></i> Loading...</span>
+			<span ng-show="explainFull">Without a limit, query found {{ explainFull.matches | number }} documents in {{ explainFull.time }}ms. It scanned {{ explainFull.scanned | number }} documents using index "{{ explainFull.index }}".</span>
 		</div>
 		<div class="panel-footer error" ng-show="error">{{error }}</div>
 	
@@ -168,7 +169,9 @@
 		</table>
 	</div>
 
-	<span ng-hide="documents==undefined || documents==[] || pageSize.name>documents.length">
+	<span ng-hide="nolimit"><i class='fa fa-spinner fa-spin'></i> Calculating total pages...</span>
+
+	<span ng-hide="documents==undefined || documents==[] || pageSize.name>documents.length || nolimit==undefined">
 		<pagination total-items="nolimit" page="page" max-size="maxSize" items-per-page="pageSize.name" class="pagination-sm" boundary-links="true" rotate="true" num-pages="numPages" on-select-page="selectPage(page)"></pagination>
 	   <pre>Page: {{page}} / {{numPages}} <span class="pull-right">docs per page:<select ng-model="pageSize" ng-change="update();" ng-options="n.name for n in pageSizeOptions"></select></span></pre>
 	</span>

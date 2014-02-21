@@ -20,6 +20,8 @@ angular.module('phpMongoAdmin').controller('cCollections', ['$scope', '$rootScop
 
 		$scope.update();
 
+		Database.getHealthcheck($rootScope.selectedDB);
+
 		var promise = Database.getUsers($scope.selectedDB);
 		promise.success(function(data) {
 			$scope.users = data;
@@ -31,7 +33,7 @@ angular.module('phpMongoAdmin').controller('cCollections', ['$scope', '$rootScop
 	// Listens for broadcass that a db was updated and refreshes the list
 	$rootScope.$on('update_databases', function() {
 		console.log("update_databases");
-		$scope.update();
+		$scope.db = Database.get($rootScope.selectedDB);
 	});
 	$rootScope.$on('update_collections', function() {
 		console.log("update_collections");

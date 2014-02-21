@@ -31,9 +31,6 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 		var promise = getDatabases();
 		promise.then(function() {
 			getConnections();
-			angular.forEach($rootScope.databases, function(values, name){
-				getHealthcheck(name);
-			});
 		})
 
 		//get the client info
@@ -85,7 +82,15 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 	}
 	
 	//==================================================================
-	// Does a healthcheck on all the databases and returns important stats
+	// Does the healthcheck on all the databases
+	function doHealthcheck() {
+		angular.forEach($rootScope.databases, function(values, name){
+			getHealthcheck(name);
+		});
+	}
+
+	//==================================================================
+	// Does a healthcheck on the databases and returns important stats
 	function getHealthcheck(name) {
 		console.log("health",name);
 
@@ -256,7 +261,7 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 	};
 
 	//==================================================================
-	// Gets documents for this db and collection
+	// Gets documents for this query on the db and collection
 	function getDocuments(dbname,collection,query,fields,sort,page,num) {
 		page--; //1 indexed to 0 indexed conversion
 
@@ -267,19 +272,67 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 		console.log("getDocuments",dbname,collection,query,fields,sort,page,num);
 
 		$rootScope.documents = null;
+		$rootScope.explain = null;
+		$rootScope.nolimit = null;
+		$rootScope.error = null;
 		
 		$http.get(apiPath + '/documents.php?db='+dbname+'&col='+collection+'&query='+query+'&fields='+fields+'&sort='+sort+'&page='+page+'&num='+num)
 			.success(function(data) {
 				$rootScope.documents = data.docs;
 				$rootScope.explain = data.explain;
 				$rootScope.error = data.error;
-				$rootScope.nolimit = data.nolimit;
 				console.log("docs Got");
 				console.log(data);
 				$rootScope.$broadcast('update_docs');
 			})
 			.error(function(data) {
 				console.log("ERROR FETCHING docs",data);
+			});
+
+		getCount(dbname,collection,query);
+	};
+
+	//==================================================================
+	// Gets count for this query on the db and collection
+	function getCount(dbname,collection,query) {
+
+		console.log("getCount",dbname,collection,query);
+
+		$rootScope.documents = null;
+		
+		$http.get(apiPath + '/count.php?db='+dbname+'&col='+collection+'&query='+query)
+			.success(function(data) {
+				$rootScope.nolimit = parseInt(data);
+				console.log("getCount Got");
+				console.log(data);
+				$rootScope.$broadcast('update_docs');
+			})
+			.error(function(data) {
+				console.log("ERROR getCount",data);
+			});
+	};
+
+	//==================================================================
+	// Gets explaination for this query on the db and collection
+	function explainQuery(dbname,collection,query,fields,sort) {
+		query = "{"+query+"}";		
+		fields = "{"+fields+"}";		
+		sort = "{"+sort+"}";		
+
+		console.log("explainQuery",dbname,collection,query,fields,sort);
+		
+		$rootScope.explainFull = undefined;
+
+		$http.get(apiPath + '/explain.php?db='+dbname+'&col='+collection+'&query='+query+'&fields='+fields+'&sort='+sort)
+			.success(function(data) {
+				$rootScope.explainFull = data.explain;
+				$rootScope.error = data.error;
+				console.log("explain Got");
+				console.log(data);
+				$rootScope.$broadcast('update_docs');
+			})
+			.error(function(data) {
+				console.log("ERROR explaining",data);
 			});
 	};
 
@@ -347,6 +400,6 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 
 
 	return {
-		init: init, get: get, runPerformance:runPerformance, getCollections:getCollections, addCollection:addCollection, getHealthcheck:getHealthcheck, deleteCollection:deleteCollection, getIndexes:getIndexes, getUsers:getUsers, deleteIndex:deleteIndex, addIndex:addIndex, getDocuments:getDocuments, getTableHeadings:getTableHeadings, getDocument:getDocument, deleteDocument:deleteDocument
+		init: init, get: get, doHealthcheck:doHealthcheck, runPerformance:runPerformance, getCollections:getCollections, addCollection:addCollection, getHealthcheck:getHealthcheck, deleteCollection:deleteCollection, getIndexes:getIndexes, explainQuery:explainQuery, getUsers:getUsers, deleteIndex:deleteIndex, addIndex:addIndex, getDocuments:getDocuments, getTableHeadings:getTableHeadings, getDocument:getDocument, deleteDocument:deleteDocument
 	};
 }]); //end factory and module
