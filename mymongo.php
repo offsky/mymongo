@@ -74,9 +74,6 @@ class mymongo {
 	finishes the job of init
 */
 	private function connect() {
-				
-		$flags = array("connectTimeoutMS" => 500);
-		if(!empty($this->replicaSet)) $flags['replicaSet'] = $this->replicaSet;
 
 		//try to connect to the db. Keep a low timeout to prevent stalled DB crashing apache with hung PHP jobs
 		$success = $this->connectClient();
