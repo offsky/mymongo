@@ -14,31 +14,37 @@ angular.module('phpMongoAdmin').controller('cCollections', ['$scope', '$rootScop
 	//==================================================================
 	// Called each time the view is loaded or reloaded
 	$scope.init = function() {
-		console.log("Collections Init");
+		// console.log("Collections Init");
 		
 		$rootScope.selectedDB = $routeParams.name;
 
 		$scope.update();
 
-		Database.getHealthcheck($rootScope.selectedDB);
+		Database.getHealthcheck($rootScope.selectedDB,false);		
+	};
+
+	//==================================================================
+	// Listens for broadcass that a db was updated and refreshes the list
+	$rootScope.$on('update_databases', function() {
+		console.log("cCollections update_databases");
+		$scope.db = Database.get($rootScope.selectedDB);
+	});
+	$rootScope.$on('update_collections', function() {
+		console.log("cCollections update_collections");
+		$scope.update();
+	});
+
+	//==================================================================
+	//
+	$scope.getUsers = function() {
+		$scope.tab=1;
 
 		var promise = Database.getUsers($scope.selectedDB);
 		promise.success(function(data) {
 			$scope.users = data;
 			if($scope.users=="null") $scope.users=[];
 		});
-	};
-
-	//==================================================================
-	// Listens for broadcass that a db was updated and refreshes the list
-	$rootScope.$on('update_databases', function() {
-		console.log("update_databases");
-		$scope.db = Database.get($rootScope.selectedDB);
-	});
-	$rootScope.$on('update_collections', function() {
-		console.log("update_collections");
-		$scope.update();
-	});
+	}
 
 	//==================================================================
 	//

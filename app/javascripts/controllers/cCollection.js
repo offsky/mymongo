@@ -26,6 +26,12 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 	$scope.fields = "";
 	$scope.sort = "";
 
+	$scope.query_t = false;
+	$scope.query_f = false;
+	$scope.fields_t = false;
+	$scope.fields_f = false;
+	$scope.sort_t = false;
+	$scope.sort_f = false;
 
 	//==================================================================
 	// Called each time the view is loaded or reloaded
@@ -53,11 +59,11 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 	//==================================================================
 	// Listens for broadcass that a db was updated and refreshes the list
 	$rootScope.$on('update_databases', function() {
-		console.log("update_databases");
+		console.log("cCollection update_databases");
 		$scope.db = Database.get($rootScope.selectedDB);
 	});
 	$rootScope.$on('update_collections', function() {
-		console.log("update_collections");
+		console.log("cCollection update_collections");
 		$scope.collections = Database.getCollections($rootScope.selectedDB);
 		if($scope.collections && $scope.collections.length) {
 			for(var i = 0;i<$scope.collections.length;i++) {
@@ -66,14 +72,14 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 		}
 	});
 	$rootScope.$on('update_indexes', function() {
-		console.log("update_indexes");
+		console.log("cCollection update_indexes");
 		$scope.indexes = Database.getIndexes($rootScope.selectedDB,$rootScope.selectedCol);
 		
 		$scope.i_name = "";
 		$scope.i_index = "";
 	});
 	$rootScope.$on('update_docs', function() {
-		console.log("update_docs");
+		console.log("cCollection update_docs");
 		
 		$scope.tableHeadings = Database.getTableHeadings();
 	});
@@ -116,9 +122,56 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 	};
 
 	//==================================================================
+	// on blur, cleans the json data by adding quotes where missing
+	// also sets the flags to drive the css feedback
+	$scope.blurquery = function() {
+		var cleaned = Database.cleanQuery($scope.query);
+		if(cleaned===false) {
+			$scope.query_f = true;
+			$scope.query_t = false;
+		} else {
+			$scope.query_f = false;
+			$scope.query_t = true;
+			$scope.query = cleaned;
+		}
+	}
+
+	//==================================================================
+	// on blur, cleans the json data by adding quotes where missing
+	// also sets the flags to drive the css feedback
+	$scope.blurfields = function() {
+		var cleaned = Database.cleanQuery($scope.fields);
+		if(cleaned===false) {
+			$scope.fields_f = true;
+			$scope.fields_t = false;
+		} else {
+			$scope.fields_f = false;
+			$scope.fields_t = true;
+			$scope.fields = cleaned;
+		}
+	}
+
+	//==================================================================
+	// on blur, cleans the json data by adding quotes where missing
+	// also sets the flags to drive the css feedback
+	$scope.blursort = function() {
+		var cleaned = Database.cleanQuery($scope.sort);
+		if(cleaned===false) {
+			$scope.sort_f = true;
+			$scope.sort_t = false;
+		} else {
+			$scope.sort_f = false;
+			$scope.sort_t = true;
+			$scope.sort = cleaned;
+		}
+	}
+
+	//==================================================================
 	//
 	$scope.search = function() {
 		console.log("search",$scope.query);
+
+		$scope.blursort();
 
 		Settings.setQuery($rootScope.selectedDB,$rootScope.selectedCol,$scope.query);	
 		Settings.setFields($rootScope.selectedDB,$rootScope.selectedCol,$scope.fields);	

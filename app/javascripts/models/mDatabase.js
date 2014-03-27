@@ -8,7 +8,7 @@ TODO: could pull out the collections and documents parts into separate models
 
 -----------------------------------------------------------------*/
 
-angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase', ['$http', '$rootScope', 'Store', function($http, $rootScope, cache) {
+angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase', ['$http', '$rootScope', 'Store', '$q', function($http, $rootScope, cache, $q) {
 
 	$rootScope.client = {}; //The last copy of the client info
 	$rootScope.databases = null; //The last copy of the list of databases and info
@@ -85,33 +85,51 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 	// Does the healthcheck on all the databases
 	function doHealthcheck() {
 		angular.forEach($rootScope.databases, function(values, name){
-			getHealthcheck(name);
+			getHealthcheck(name,false);
 		});
 	}
 
 	//==================================================================
 	// Does a healthcheck on the databases and returns important stats
-	function getHealthcheck(name) {
-		console.log("health",name);
+	function getHealthcheck(name,force) {
+		// console.log("health",name);
+		var now = new Date().getTime();
 
-		var promise = $http.get(apiPath + '/databases.php?one='+name);
+		//determine if the last healthcheck is recent enough
+		var doCheck = true;
+		if(force==false && $rootScope.databases[name].health!==undefined) {
+			if($rootScope.databases[name].lasthealth>now-(60*1000)) {
+				doCheck = false;
+			}
+		}
+
+		if(doCheck) {
+			var promise = $http.get(apiPath + '/databases.php?one='+name);
+
+			promise.success(function(data) {
+				$rootScope.databases[name] = data[name];
+				$rootScope.databases[name].lasthealth = now;
+				
+				//console.log("getHealthcheck callback");
+				// console.table(data);
+				$rootScope.$broadcast('update_databases');
+			});
+			promise.error(function(data) {
+				//console.log("ERROR getHealthcheck",data);
+			});
+		} else {
+			var deferred = $q.defer();
+			var promise = deferred.promise;
+			deferred.resolve();
+		}
 		
-		promise.success(function(data) {
-			$rootScope.databases[name] = data[name];
-			//console.log("getHealthcheck callback");
-			// console.table(data);
-			$rootScope.$broadcast('update_databases');
-		});
-		promise.error(function(data) {
-			console.log("ERROR getHealthcheck",data);
-		});
 		return promise;
 	}
 
 	//==================================================================
 	// Gets one db by name 
 	function get(dbname) {
-		console.log("get db",dbname,$rootScope.databases);
+		// console.log("get db",dbname,$rootScope.databases);
 		return $rootScope.databases[dbname];
 	};
 
@@ -129,7 +147,7 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 	//==================================================================
 	// Gets collections for this db 
 	function getCollections(dbname) {
-		console.log("getCollections",dbname,$rootScope.databases);
+		console.log("getCollections",dbname);
 
 		//if I have the the collection cached this session return it
 		if($rootScope.allCollections[dbname]!=undefined) return $rootScope.allCollections[dbname];
@@ -205,7 +223,7 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 	//==================================================================
 	// Gets indexes for this db and collection
 	function getIndexes(dbname,collection) {
-		console.log("getIndexes",dbname,collection);
+		// console.log("getIndexes",dbname,collection);
 
 		if($rootScope.allIndexes[dbname]!=undefined && $rootScope.allIndexes[dbname][collection]!=undefined) return $rootScope.allIndexes[dbname][collection];
 
@@ -213,12 +231,12 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 			.success(function(data) {
 				if($rootScope.allIndexes[dbname]==undefined) $rootScope.allIndexes[dbname]={};
 				$rootScope.allIndexes[dbname][collection] = data;
-				console.log("Indexes Got");
-				console.log(data);
+				// console.log("Indexes Got");
+				// console.log(data);
 				$rootScope.$broadcast('update_indexes');
 			})
 			.error(function(data) {
-				console.log("ERROR FETCHING indexes",data);
+				// console.log("ERROR FETCHING indexes",data);
 			});
 	};
 
@@ -227,17 +245,17 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 	function addIndex(dbname,collection,name,index,unique,background,dropdups,sparse) {
 		if(!index) return;
 		
-		console.log("addIndex",dbname,collection,name,index);
+		// console.log("addIndex",dbname,collection,name,index);
 
 		$http.post(apiPath + '/index_add.php','db='+dbname+'&col='+collection+'&name='+name+'&index='+index+'&unique='+unique+'&background='+background+'&dropdups='+dropdups+'&sparse='+sparse, {'headers': {'Content-Type': 'application/x-www-form-urlencoded'}})
 			.success(function(data) {
-				console.log("added indexes",data);
+				// console.log("added indexes",data);
 
 				$rootScope.allIndexes[dbname]=undefined;
 				getIndexes(dbname,collection);
 			})
 			.error(function(data) {
-				console.log("ERROR FETCHING indexes",data);
+				// console.log("ERROR FETCHING indexes",data);
 			});
 	};
 
@@ -246,17 +264,17 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 	function deleteIndex(dbname,collection,index) {
 		if(!index) return;
 
-		console.log("deleteIndexes",dbname,collection,index);
+		// console.log("deleteIndexes",dbname,collection,index);
 
 		$http.post(apiPath + '/index_remove.php','db='+dbname+'&col='+collection+'&index='+index, {'headers': {'Content-Type': 'application/x-www-form-urlencoded'}})
 			.success(function(data) {
-				console.log("deleted indexes",data);
+				// console.log("deleted indexes",data);
 
 				$rootScope.allIndexes[dbname]=undefined;
 				getIndexes(dbname,collection);
 			})
 			.error(function(data) {
-				console.log("ERROR deleting indexes",data);
+				// console.log("ERROR deleting indexes",data);
 			});
 	};
 
@@ -282,7 +300,7 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 				$rootScope.explain = data.explain;
 				$rootScope.error = data.error;
 				console.log("docs Got");
-				console.log(data);
+				//console.log(data);
 				$rootScope.$broadcast('update_docs');
 			})
 			.error(function(data) {
@@ -291,6 +309,36 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 
 		explainQuery(dbname,collection,query,fields,sort);
 	};
+
+	//==================================================================
+	// Takes a query which should be json and make sure it is
+	function cleanQuery(query) {
+		query = "{"+query+"}";
+		// console.log("clean",query);
+
+		//try once to see if it is valid
+		try {
+			var obj = angular.fromJson(query);
+		} catch(e) {
+			//conver ' to " and add missing quotes
+			//TODO: This will not work correctly when you use a literal : in a query
+			query = query.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":');
+		}
+
+		if(obj==undefined) {
+			//try again
+			try {
+				var obj = angular.fromJson(query);
+			} catch(e) {
+				return false;
+			}
+		}
+
+		var cleaned = angular.toJson(obj);
+		cleaned = cleaned.substring(1,cleaned.length-1);
+		// console.log("cleaned",cleaned);
+		return cleaned;
+	}
 
 	//==================================================================
 	// Gets count for this query on the db and collection
@@ -304,7 +352,7 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 			.success(function(data) {
 				$rootScope.nolimit = parseInt(data);
 				console.log("getCount Got");
-				console.log(data);
+				// console.log(data);
 				$rootScope.$broadcast('update_docs');
 			})
 			.error(function(data) {
@@ -326,7 +374,7 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 				$rootScope.error = data.error;
 				$rootScope.nolimit = parseInt(data.explain.matches);
 				console.log("explain Got");
-				console.log(data);
+				// console.log(data);
 				$rootScope.$broadcast('update_docs');
 			})
 			.error(function(data) {
@@ -398,6 +446,12 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 
 
 	return {
-		init: init, get: get, doHealthcheck:doHealthcheck, runPerformance:runPerformance, getCollections:getCollections, addCollection:addCollection, getHealthcheck:getHealthcheck, deleteCollection:deleteCollection, getIndexes:getIndexes, explainQuery:explainQuery, getUsers:getUsers, deleteIndex:deleteIndex, addIndex:addIndex, getDocuments:getDocuments, getTableHeadings:getTableHeadings, getDocument:getDocument, deleteDocument:deleteDocument
+		init: init, get: get, doHealthcheck:doHealthcheck, 
+		runPerformance:runPerformance, getCollections:getCollections, 
+		addCollection:addCollection, getHealthcheck:getHealthcheck, 
+		deleteCollection:deleteCollection, getIndexes:getIndexes, 
+		explainQuery:explainQuery, getUsers:getUsers, deleteIndex:deleteIndex, 
+		addIndex:addIndex, getDocuments:getDocuments, getTableHeadings:getTableHeadings,
+		getDocument:getDocument, cleanQuery:cleanQuery, deleteDocument:deleteDocument
 	};
 }]); //end factory and module

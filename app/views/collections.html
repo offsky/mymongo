@@ -3,7 +3,7 @@
 <div class="col-md-12">
 	<ul class="nav nav-pills pull-right">
 		<li ng-class="{active:tab==0}"><a ng-click="tab=0">Collections</a></li>
-		<li ng-class="{active:tab==1}"><a ng-click="tab=1">Users</a></li>
+		<li ng-class="{active:tab==1}"><a ng-click="getUsers()">Users</a></li>
 		<li ng-class="{active:tab==2}"><a ng-click="tab=2">Stats</a></li>
 		<li ng-class="{active:tab==3}"><a ng-click="tab=3">Actions</a></li>
 	</ul>
@@ -14,7 +14,7 @@
 	<div ng-show="tab==3" class="panel panel-primary">
 		<div class="panel-heading"><b>Actions</b></div>
 		<div class="panel-body">
-
+			<p>This will connect to the admin collection in this database and insert, update, read and delete 100 records.</p>
 			<button ng-hide="runningPerf" class="btn btn-info" ng-click="performance()">Run Performance Test</button>
 			<span ng-show="runningPerf"><i class='fa fa-spinner fa-spin'></i> Running...</span>
 			<span ng-show="testResults">{{ testResults }} sec</span>

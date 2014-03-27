@@ -13,12 +13,12 @@ angular.module('phpMongoAdmin').controller('cDatabases', ['$scope', '$rootScope'
 		$rootScope.selectedDB = "";
 		$rootScope.pagetitle = " Databases";
 		Database.doHealthcheck();
-		console.log("cDatabases Init");
+		//console.log("cDatabases Init");
 	};
 
 	$scope.healthagain = function(db) {
 		db.health=null;
-		Database.getHealthcheck(db.name);
+		Database.getHealthcheck(db.name,true);
 	};
 }]);
 

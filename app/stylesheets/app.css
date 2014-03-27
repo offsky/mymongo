@@ -29,7 +29,8 @@ h2, h3 { margin-top:2px;}
 /* Sidebar */
 .sidebar { overflow:hidden;  text-overflow: ellipsis;}
 .sidebar .badge { font-weight: 200; font-size:0.7em;}
-.sidebar .list-group-item { padding: 10px 6px;}
+.sidebar .list-group-item { padding: 10px 6px; width:170px; height:40px;}
+.sidebar .title { float: left; display:block; overflow:hidden; text-overflow:ellipsis; width:120px; }
 .sidebar h3 { margin-bottom:3px;}
 
 /* Home */

@@ -4,7 +4,7 @@
 	<h3><a href="#/db/{{selectedDB}}">{{ selectedDB }}</a></h3>
 	<br />
 	<div class="list-group">
-		<a ng-repeat="c in collections" class="list-group-item" ng-class="{active:c.name==collection.name}" href="#/db/{{selectedDB}}/{{c.name}}">{{c.name}} <span class="badge">{{c.stats.count | bignumber}}</span></a>
+		<a ng-repeat="c in collections" class="list-group-item" ng-class="{active:c.name==collection.name}" href="#/db/{{selectedDB}}/{{c.name}}"><span class="title">{{c.name}}</span><span class="badge">{{c.stats.count | bignumber}}</span></a>
 	</div>
 	<span ng-show="db.stats.collections!=undefined">{{collections.length | number:0}} Collections</span>
 </div>
@@ -123,11 +123,11 @@
 		<a href="http://docs.mongodb.org/manual/reference/operator/" target="_new" class="pull-right">Help</a>
 	  	<form ng-submit="search()">
 		find( { 
-		<input type="text" class="form-control input-sm" id="query" ng-model="query" placeholder="criteria">
+		<input type="text" class="form-control input-sm" ng-class="{'has-error':query_f,'has-success':query_t}" id="query" ng-blur="blurquery()" ng-model="query" placeholder='"field":"value"'>
 		} , {
-		<input type="text" class="form-control input-sm" id="fields" ng-model="fields" placeholder="projection">
+		<input type="text" class="form-control input-sm" ng-class="{'has-error':fields_f,'has-success':fields_t}" id="fields" ng-blur="blurfields()" ng-model="fields" placeholder='"field":1'>
 		} ) . sort( {
-		<input type="text" class="form-control input-sm" id="sort" ng-model="sort" placeholder="sort">
+		<input type="text" class="form-control input-sm" ng-class="{'has-error':sort_f,'has-success':sort_t}" id="sort" ng-model="sort" ng-blur="blursort()" placeholder='"field":1'>
 		} )
 		<button type="submit" id="search" class="btn btn-default btn-info btn-sm" ng-click="search()">Search</button>
 		</form>
