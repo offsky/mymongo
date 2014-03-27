@@ -171,7 +171,9 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 	$scope.search = function() {
 		console.log("search",$scope.query);
 
-		$scope.blursort();
+		$scope.blursort()
+		$scope.blurfields()
+		$scope.blurquery();
 
 		Settings.setQuery($rootScope.selectedDB,$rootScope.selectedCol,$scope.query);	
 		Settings.setFields($rootScope.selectedDB,$rootScope.selectedCol,$scope.fields);	

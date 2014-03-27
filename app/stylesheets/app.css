@@ -73,7 +73,7 @@ button#search { margin-left:50px; display:inline-block;}
 .json .null { color: #268bd2; }
 .json .key { color: #333; }
 
-.vDocument .delDoc { margin-top:50px;}
+.vDocument .delDoc, .vDocument .editDoc { display:inline-block; margin-top:50px;}
 .vDocument .showDoc { margin-top:50px;}
 
 .pointer { cursor: pointer;}

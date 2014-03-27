@@ -435,6 +435,24 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 	}
 
 	//==================================================================
+	// Saves the edited document
+	function saveDocument(dbname,collection,id,doc) {
+		console.log("saveDocument",dbname,collection,id,doc);
+		
+		var json = angular.toJson(doc);
+
+		var promise = $http.post(apiPath + '/doc_save.php','db='+dbname+'&col='+collection+'&id='+id+'&doc='+json, {'headers': {'Content-Type': 'application/x-www-form-urlencoded'}});
+		
+		promise.success(function(data) {
+			console.log("saved document",data);
+		});
+		promise.error(function(data) {
+			console.log("ERROR saving document",data);
+		});
+		return promise;
+	}
+
+	//==================================================================
 	// Runs a performance test on the db in the admin Collection
 	function runPerformance(dbname) {
 		var promise = $http.get(apiPath + '/performance.php?db='+dbname)
@@ -444,14 +462,12 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 		return promise;
 	};
 
-
 	return {
-		init: init, get: get, doHealthcheck:doHealthcheck, 
-		runPerformance:runPerformance, getCollections:getCollections, 
-		addCollection:addCollection, getHealthcheck:getHealthcheck, 
-		deleteCollection:deleteCollection, getIndexes:getIndexes, 
-		explainQuery:explainQuery, getUsers:getUsers, deleteIndex:deleteIndex, 
-		addIndex:addIndex, getDocuments:getDocuments, getTableHeadings:getTableHeadings,
-		getDocument:getDocument, cleanQuery:cleanQuery, deleteDocument:deleteDocument
+		init: init, get: get, doHealthcheck:doHealthcheck, getHealthcheck:getHealthcheck, runPerformance:runPerformance, 
+		getCollections:getCollections, addCollection:addCollection, deleteCollection:deleteCollection, 
+		getTableHeadings:getTableHeadings, getUsers:getUsers, 
+		getIndexes:getIndexes, deleteIndex:deleteIndex, addIndex:addIndex,
+		explainQuery:explainQuery, cleanQuery:cleanQuery, getDocuments:getDocuments,
+		getDocument:getDocument, saveDocument:saveDocument, deleteDocument:deleteDocument
 	};
 }]); //end factory and module

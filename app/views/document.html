@@ -4,7 +4,7 @@
 	<h3><a href="#/db/{{selectedDB}}">{{ selectedDB }}</a></h3>
 	<br />
 	<div class="list-group">
-		<a ng-repeat="c in collections" class="list-group-item" ng-class="{active:c.name==collection.name}" href="#/db/{{selectedDB}}/{{c.name}}">{{c.name}} <span class="badge">{{c.stats.count | bignumber}}</span></a>
+		<a ng-repeat="c in collections" class="list-group-item" ng-class="{active:c.name==collection.name}" href="#/db/{{selectedDB}}/{{c.name}}"><span class="title">{{c.name}}</span><span class="badge">{{c.stats.count | bignumber}}</span></a>
 	</div>
 	<span ng-show="db.stats.collections!=undefined">{{db.stats.collections | number:0}} Collections</span>
 </div>
@@ -12,12 +12,20 @@
 	<h3><a href="#/db/{{selectedDB}}/{{selectedCol}}">{{selectedCol}}</a> &gt; {{ selectedDoc }}</h3>
 
 	<div class="showDoc" ng-show="doc && doc._id">
-		<pre ng-bind-html="doc | json"></pre>
+		<div id="jsoneditor" jsoneditor="currDoc" dirty="dirty"></div>
+
+		<div class="editDoc" ng-show="confirm==0 && dirty==true">
+			<button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
+			<button type="button" class="btn btn-success" ng-click="save()">Save</button>
+		</div>
+
+		<div ng-show="saving"><br /><i class='fa fa-spinner fa-spin'></i> Saving...</div>
 
 		<div class="delDoc">
 			<button ng-show="confirm==0" type="button" class="btn btn-warning" ng-hide="confirm" ng-click="confirm=1">Delete Document</button>
 			<span ng-show="confirm==1">
 				Are you sure?<br /><br />
+				<button type="button" class="btn btn-default" ng-click="confirm=0">cancel</button>
 				<button type="button" class="btn btn-danger" ng-click="delete()">sudo Delete Document</button>
 			</span>
 			<i ng-show="confirm==2" class='fa fa-spinner fa-spin'></i>

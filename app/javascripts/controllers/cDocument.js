@@ -12,6 +12,9 @@ angular.module('phpMongoAdmin').controller('cDocument', ['$scope', '$rootScope',
 	$scope.collections = null;
 	$scope.collection = null;
 	$scope.confirm = 0;
+	$scope.dirty = false;
+	$scope.currDoc = null; //The current doc potentially edited but not saved
+	$scope.saving = false;
 
 	//==================================================================
 	// Called each time the view is loaded or reloaded
@@ -40,6 +43,10 @@ angular.module('phpMongoAdmin').controller('cDocument', ['$scope', '$rootScope',
 			}
 		}
 	});
+	$rootScope.$on('update_doc', function() {
+		//document updated
+		$scope.currDoc = $rootScope.doc;
+ 	});
 
 	//==================================================================
 	//
@@ -57,6 +64,28 @@ angular.module('phpMongoAdmin').controller('cDocument', ['$scope', '$rootScope',
 		}
 	
 		Database.getDocument($rootScope.selectedDB,$rootScope.selectedCol,$rootScope.selectedDoc);
+	};
+
+	//==================================================================
+	// Saves the edited document
+	$scope.cancel = function() {
+		console.log("cancel");
+		$scope.currDoc = $rootScope.doc;
+		$scope.dirty = false;
+	};
+
+	//==================================================================
+	// Saves the edited document
+	$scope.save = function() {
+		console.log("save");
+		$rootScope.doc = $scope.currDoc;
+		$scope.dirty = false;
+		$scope.saving = true;
+
+		var promise = Database.saveDocument($rootScope.selectedDB,$rootScope.selectedCol,$rootScope.selectedDoc,$scope.currDoc);
+		promise.then(function() {
+			$scope.saving = false;
+		});
 	};
 
 	//==================================================================
