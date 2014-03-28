@@ -2,14 +2,20 @@
 
 /* Directives */
 
+/*
+From: https://github.com/josdejong/jsoneditor/
 
+May want to do this: https://github.com/josdejong/jsoneditor/issues/27
+So I can prevent editing of _id and binary data fields
+*/
 angular.module('phpMongoAdmin.directives', []).directive('jsoneditor', function() {
     return {
 		restrict: "A", //attribute <div slice-scroll>...</div>
 
 		scope: {
 			jsoneditor: '=',	//Bi-directional binding.
-			dirty: '='
+			dirty: '=',
+			readonly: '@' 
 		},
 
 		link: function(scope, container, attrs) {
@@ -39,9 +45,12 @@ angular.module('phpMongoAdmin.directives', []).directive('jsoneditor', function(
 			};
 
 			scope.dirty=false;
+			var mode = "tree";
+			if(scope.readonly=="true" || scope.readonly===true) mode = "view";
      		var editor = new jsoneditor.JSONEditor(container[0], {
      			change: wasEdited,
-     			name: "Document"
+     			name: "Document",
+     			mode: mode
      		});
 	
 			//need to watch the master array for changes to length

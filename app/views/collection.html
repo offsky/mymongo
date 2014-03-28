@@ -29,7 +29,8 @@
 	<div ng-show="tab==3" class="panel panel-primary">
 		<div class="panel-heading"><b>Actions</b></div>
 		<div class="panel-body">
-			<button class="btn btn-danger" ng-click="deleteCollection()">Delete Collection</button>
+			<button class="btn btn-danger" ng-hide="db.readonly" ng-click="deleteCollection()">Delete Collection</button>
+			<span ng-show="db.readonly">Your config file has this DB set to read-only mode, so no edits are possible.</span>
 		</div>
 	</div>
 
@@ -76,7 +77,7 @@
 					<th><span class="hastip" tooltip="Builds the index in the background slowly instead of blocking the database for reads/writes." tooltip-placement="bottom">Background</span></th>
 					<th><span class="hastip" tooltip="To force the creation of a unique index, you can specify the dropDups option, which will only index the first occurrence of a value for the key, and delete all subsequent values." tooltip-placement="bottom">DropDups</span></th>
 					<th><span class="hastip" tooltip="Sparse indexes only contain entries for documents that have the indexed field, even if the index field contains a null value. For single-field indexes only." tooltip-placement="bottom">Sparse</span></th>
-					<th>Action</th>
+					<th ng-hide="db.readonly">Action</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -88,13 +89,13 @@
 					<td ng-bind-html="index.background | bool"></td>
 					<td ng-bind-html="index.dropDups | bool"></td>
 					<td ng-bind-html="index.sparse | bool"></td>
-					<td class="text-center">
+					<td class="text-center" ng-hide="db.readonly">
 						<button type="button" class="btn btn-danger btn-xs" ng-click="deleteIndex(index.name)">
 						<span class="glyphicon glyphicon-remove"></span>
 						</button>
 					</td>
 				</tr>
-				<tr ng-hide="indexes==undefined || indexes=={}">
+				<tr ng-hide="db.readonly || indexes==undefined || indexes=={}">
 					<td><input type="text" class="form-control input-sm" ng-model="i_name" placeholder="Optional Name" /></td>
 					<td><input type="text" class="form-control input-sm" ng-model="i_index" placeholder='Index JSON'/></td>
 					<td><input type="checkbox" ng-model="i_unique" /></td>

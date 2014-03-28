@@ -185,18 +185,21 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 	//==================================================================
 	//
 	$scope.deleteIndex = function(index) {
+		if($scope.db.readonly) return;
 		Database.deleteIndex($rootScope.selectedDB,$rootScope.selectedCol,index);
 	};
 
 	//==================================================================
 	//
 	$scope.addIndex = function(index) {
+		if($scope.db.readonly) return;
 		Database.addIndex($rootScope.selectedDB,$rootScope.selectedCol,$scope.i_name,$scope.i_index,$scope.i_unique,$scope.i_back,$scope.i_drop,$scope.i_sparse);		
 	};
 
 	//==================================================================
 	//
 	$scope.deleteCollection = function(index) {
+		if($scope.db.readonly) return;
 		var result = prompt("Are you sure you want to DELETE this entire collection? If yes, please enter the name of the collection to confirm.");
 		if(result==$rootScope.selectedCol) {
 			Database.deleteCollection($rootScope.selectedDB,$rootScope.selectedCol);

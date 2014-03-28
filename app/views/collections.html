@@ -26,19 +26,37 @@
 		
 		<table ng-hide="(databases && databases.length==0)" class="table table-striped table-hover table-condensed">
 			<tbody>
-				<tr><th>Server</th><td colspan="3">{{ db.info.sysInfo }}</td></tr>
-				<tr><th>User</th><td class="text-right">{{db.user}}</td>
-					<th>Objects</th><td class="text-right">{{db.stats.objects | number:0}}</td></tr>
-				<tr><th>ReplicaSet</th><td class="text-right" ng-bind-html="db.replicaSet | bool"></td>
-					<th>Indexes</th><td class="text-right">{{db.stats.indexes | number:0}}</td></tr>
-				<tr><th>SSL</th><td class="text-right" ng-bind-html="db.ssl | bool"></td>
-					<th><span class="hastip" tooltip="The average size of each document." tooltip-placement="right">AvgObjSize</span></th><td class="text-right" ng-bind-html="db.stats.avgObjSize | bytes:1"></td></tr>
-				<tr><th>Server Version</th><td class="text-right"><a href="http://docs.mongodb.org/manual/" target="_new" ng-bind-html="db.info.version | nullspin"></a></td>
-					<th><span class="hastip" tooltip="If on, the profiler writes all the data it collects about slow queries to the system.profile collection." tooltip-placement="right" tooltip-append-to-body="1">Profile</span></th><td class="text-right" ng-bind-html="db.profile | profileLevel"></td></tr>
-				<tr><th><span class="hastip" tooltip="The total size of the data held in this database including the padding factor." tooltip-placement="right">DataSize</span></th><td class="text-right" ng-bind-html="db.stats.dataSize | bytes:1"></td>
-					<th><span class="hastip" tooltip="The total amount of space allocated to collections in this database for document storage." tooltip-placement="right">StorageSize</span></th><td class="text-right" ng-bind-html="db.stats.storageSize | bytes:1"></td></tr>
-				<tr><th><span class="hastip" tooltip="The total size of all indexes created on this database." tooltip-placement="right">IndexSize</span></th><td class="text-right" ng-bind-html="db.stats.indexSize | bytes:1"></td>
-					<th><span class="hastip" tooltip="The total size of the data files that hold the database. This value includes preallocated space and the padding factor." tooltip-placement="right">FileSize</span></th><td class="text-right" ng-bind-html="db.stats.fileSize | bytes:1"></td></tr>
+				<tr>
+					<th>Server</th><td colspan="3">{{ db.info.sysInfo }}</td>
+				</tr>
+				<tr>
+					<th>User</th><td class="text-right">{{db.user}}</td>
+					<th>Objects</th><td class="text-right">{{db.stats.objects | number:0}}</td>
+				</tr>
+				<tr>
+					<th>ReplicaSet</th><td class="text-right" ng-bind-html="db.replicaSet | bool"></td>
+					<th>Indexes</th><td class="text-right">{{db.stats.indexes | number:0}}</td>
+				</tr>
+				<tr>
+					<th>SSL</th><td class="text-right" ng-bind-html="db.ssl | bool"></td>
+					<th><span class="hastip" tooltip="The average size of each document." tooltip-placement="right">AvgObjSize</span></th><td class="text-right" ng-bind-html="db.stats.avgObjSize | bytes:1"></td>
+				</tr>
+				<tr>
+					<th>Server Version</th><td class="text-right"><a href="http://docs.mongodb.org/manual/" target="_new" ng-bind-html="db.info.version | nullspin"></a></td>
+					<th><span class="hastip" tooltip="The total size of the data held in this database including the padding factor." tooltip-placement="right">DataSize</span></th><td class="text-right" ng-bind-html="db.stats.dataSize | bytes:1"></td>
+				</tr>
+				<tr>
+					<th><span class="hastip" tooltip="If on, the profiler writes all the data it collects about slow queries to the system.profile collection." tooltip-placement="right" tooltip-append-to-body="1">Profile</span></th><td class="text-right" ng-bind-html="db.profile | profileLevel"></td>
+					<th><span class="hastip" tooltip="The total amount of space allocated to collections in this database for document storage." tooltip-placement="right">StorageSize</span></th><td class="text-right" ng-bind-html="db.stats.storageSize | bytes:1"></td>
+				</tr>
+				<tr>
+					<th><span class="hastip" tooltip="The name of the admin collection (if enabled) which gives this tool extra functionality." tooltip-placement="right">Admin Collection</span></th><td class="text-right">{{ db.adminCollection }}</td>
+					<th><span class="hastip" tooltip="The total size of the data files that hold the database. This value includes preallocated space and the padding factor." tooltip-placement="right">FileSize</span></th><td class="text-right" ng-bind-html="db.stats.fileSize | bytes:1"></td>
+				</tr>
+				<tr>
+					<th><span class="hastip" tooltip="A safety flag set in your config file to prevent editing important databases" tooltip-placement="right">Read Only</span></th><td class="text-right" ng-bind-html="db.readonly | bool"></td>
+					<th><span class="hastip" tooltip="The total size of all indexes created on this database." tooltip-placement="right">IndexSize</span></th><td class="text-right" ng-bind-html="db.stats.indexSize | bytes:1"></td>					
+				</tr>
 			</tbody>
 		</table>
 
@@ -95,8 +113,8 @@
 	</div>
 
 	<br />
-	<button type="button" class="btn btn-default" ng-hide="showAddCollection" ng-click="showAddCollection=true">New Collection</button>
-	<div class="panel panel-success" ng-show="showAddCollection">
+	<button type="button" class="btn btn-info" ng-hide="db.readonly || showAddCollection" ng-click="showAddCollection=true">New Collection</button>
+	<div class="panel panel-success" ng-show="!db.readonly && showAddCollection">
 	<div class="panel-heading"><b>Create Collection</b></div>
 	<div class="panel-body">
 		<form class="form-horizontal" role="form" ng-submit="addCollection()">

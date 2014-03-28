@@ -59,7 +59,7 @@ angular.module('phpMongoAdmin').controller('cCollections', ['$scope', '$rootScop
 	//==================================================================
 	// Collects the options for adding the collection and sends to model
 	$scope.addCollection = function() {
-		if($scope.addCollectionName==undefined || $scope.addCollectionName=="") return;
+		if($scope.db.readonly || $scope.addCollectionName==undefined || $scope.addCollectionName=="") return;
 		Database.addCollection($rootScope.selectedDB,$scope.addCollectionName,$scope.addCollectionCapped,$scope.addCollectionSize,$scope.addCollectionMax);
 		
 		$scope.showAddCollection = false;

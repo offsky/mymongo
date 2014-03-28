@@ -78,6 +78,7 @@ angular.module('phpMongoAdmin').controller('cDocument', ['$scope', '$rootScope',
 	// Saves the edited document
 	$scope.save = function() {
 		console.log("save");
+		if($scope.db.readonly) return;
 		$rootScope.doc = $scope.currDoc;
 		$scope.dirty = false;
 		$scope.saving = true;
@@ -91,6 +92,7 @@ angular.module('phpMongoAdmin').controller('cDocument', ['$scope', '$rootScope',
 	//==================================================================
 	// Deletes the document
 	$scope.delete = function() {
+		if($scope.db.readonly) return;
 		$scope.confirm=2;
 		var promise = Database.deleteDocument($rootScope.selectedDB,$rootScope.selectedCol,$rootScope.selectedDoc);
 		promise.success(function() {
