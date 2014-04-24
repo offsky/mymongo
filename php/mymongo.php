@@ -482,7 +482,8 @@ class mymongo {
 			if(!empty($sort)) $cursor->sort($sort);
 			if(!empty($skip)) $cursor->skip($skip);
 			if(!empty($limit)) $cursor->limit($limit);
-		
+					//$cursor->hint("u_1__id_-1");
+
 		} catch(MongoException $e) {
 			$this->log_db_error("FIND",$this->MyTable,$e->getMessage(),$e->getCode(),$this->serializeQuery($query));
 			$this->performance($start,"FIND",$query,false);

@@ -25,7 +25,7 @@ module.exports = function (grunt) {
       // },
       styles: {
         files: ['app/stylesheets/{,*/}*.css'],
-        tasks: ['copy:styles', 'autoprefixer']
+        tasks: ['copy:styles']
       },
       livereload: {
         options: {
@@ -39,17 +39,7 @@ module.exports = function (grunt) {
         ]
       }
     },
-    autoprefixer: {
-      options: ['last 1 version'],
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '.tmp/stylesheets/',
-          src: '{,*/}*.css',
-          dest: '.tmp/stylesheets/'
-        }]
-      }
-    },
+
     connect: {
       options: {
         port: 9000,
@@ -189,14 +179,16 @@ module.exports = function (grunt) {
             '.htaccess',
             'bower_components/**/*',
             'w3c/*',
-            'images/{,*/}*.{gif,webp}',
+            'images/**/*',
             'apple-touch*',
-            'styles/font/*',
+            'stylesheets/fonts/*',
             'labels.rdf',
             'robots.txt',
             '404.html',
             '504.html',
-            'index.html'
+            'index.html',
+            'ajax/**/*',
+            'template/**/*'
           ]
         }, {
           expand: true,
@@ -251,16 +243,6 @@ module.exports = function (grunt) {
       //   singleRun: true
       }
     },
-    ngmin: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: 'dist/javascripts',
-          src: '*.js',
-          dest: 'dist/javascripts'
-        }]
-      }
-    },
     uglify: {
       dist: {
         files: {
@@ -280,7 +262,6 @@ module.exports = function (grunt) {
     grunt.task.run([
       'clean:server',
       'concurrent:server',
-      'autoprefixer',
       'connect:livereload',
       'open',
       'watch'
@@ -290,22 +271,19 @@ module.exports = function (grunt) {
   grunt.registerTask('test', [
     'clean:server',
     'concurrent:test',
-    'autoprefixer',
     'connect:test',
     'karma:unit'
   ]);
 
   grunt.registerTask('build', [
     'clean:dist',
-    'test',
+    //'test',
     'useminPrepare',
     'concurrent:dist',
-    'autoprefixer',
     'concat',
     'copy:dist',
-    'ngmin',
     'cssmin',
-    'uglify',
+    // 'uglify',
     'rev',
     'usemin'
   ]);
