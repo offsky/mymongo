@@ -1,12 +1,16 @@
 <?php
 
-require_once("../../../php/init.php");
+require_once("../../php/init.php");
 require_once("_helpers.php");
 
 
 //select database
 $db = findDB($_GET['db']);
 $m = new mymongo($db['hosts'],$db['user'],$db['password'],$db['name'],$db['replicaSet'],$db['ssl']);
+
+$_POST['col'] = removeSlashes($_POST['col']);
+$_POST['query'] = removeSlashes($_POST['query']);
+
 
 //select collection
 $m->changeTable($_GET['col']);

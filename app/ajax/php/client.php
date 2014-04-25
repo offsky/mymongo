@@ -1,6 +1,6 @@
 <?php
 
-require_once("../../../php/init.php");
+require_once("../../php/init.php");
 
 $m = new mymongo('','','','');
 

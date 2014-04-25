@@ -1,8 +1,12 @@
 <?php
 
-require_once("../../../php/init.php");
+require_once("../../php/init.php");
 require_once("_helpers.php");
 
+$_GET['col'] = removeSlashes($_GET['col']);
+$_GET['query'] = removeSlashes($_GET['query']);
+$_GET['fields'] = removeSlashes($_GET['fields']);
+$_GET['sort'] = removeSlashes($_GET['sort']);
 
 //select database
 $db = findDB($_GET['db']);

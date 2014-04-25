@@ -1,6 +1,6 @@
 <?php
 
-require_once("../../../php/init.php");
+require_once("../../php/init.php");
 require_once("_helpers.php");
 
 
@@ -11,6 +11,9 @@ if($db['readonly']) {
 	echo 0;
 	exit();
 }
+
+$_POST['col'] = removeSlashes($_POST['col']);
+
 
 $m = new mymongo($db['hosts'],$db['user'],$db['password'],$db['name'],$db['replicaSet'],$db['ssl']);
 

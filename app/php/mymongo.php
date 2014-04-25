@@ -1,14 +1,8 @@
 <?php
 /*
-	Simple wrapper class for PHP's Mongo drivers that abstracts the connection and error handling
+	Simple wrapper class for PHP's Mongo drivers
 
-	Copyright Toodledo 2012
-	
-	Usage:
-	
-	$m = new mymongo("server","collection");
-	$obj = array( "date" => date('r'));
-	$m->insert($obj,false);
+	Copyright Toodledo 2014
 	
 */
 
@@ -318,6 +312,21 @@ class mymongo {
 		if($result['ok']) return true;
 		return false;
 	}
+
+
+/* RENAMECOLLECTION ============================================================================
+	Renames a collection
+*/
+	public function renameCollection($name,$newName) {
+		if($this->db==null) return false; //we never got connected
+		if(empty($name) || empty($newName)) return false;
+
+		$result = $this->db->command(array("renameCollection" => $name, "to" => $newName));
+		
+		if($result['ok']) return true;
+		return false;
+	}
+
 
 /* INSERT ================================================================================
 	Inserts an object into a table. 

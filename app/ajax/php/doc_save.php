@@ -1,6 +1,6 @@
 <?php
 
-require_once("../../../php/init.php");
+require_once("../../php/init.php");
 require_once("_helpers.php");
 
 //select database
@@ -11,6 +11,9 @@ if($db['readonly']) {
 	exit();
 }
 
+$_POST['col'] = removeSlashes($_POST['col']);
+$_POST['doc'] = removeSlashes($_POST['doc']);
+
 $m = new mymongo($db['hosts'],$db['user'],$db['password'],$db['name'],$db['replicaSet'],$db['ssl']);
 
 //select collection
@@ -20,18 +23,19 @@ $m->changeTable($_POST['col']);
 $id = $_POST['id'];
 $doc = json_decode($_POST['doc'],true);
 
-$query = array('_id' => new MongoId($id));
-
 //process the data
-echo "#".$_POST['col'];
 $doc = private_transformation_write($_POST['db'],$_POST['col'],$doc); //in config.php
 
 unset($doc['_id']);
-print_r($doc);
 
-//do the query
-$success = $m->update($query,array('$set'=>$doc));
+//do the save
+if($id=="new") {
+	$success = $m->insert($doc);
+} else {
+	$query = array('_id' => new MongoId($id));
+	$success = $m->update($query,array('$set'=>$doc));
+}
 
-if($success) echo 1;
+if($success) echo $doc['_id'];
 else echo 0;
 ?>
