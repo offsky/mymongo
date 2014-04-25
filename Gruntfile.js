@@ -149,10 +149,23 @@ module.exports = function (grunt) {
         }]
       }
     },
+    
     // By default, your `index.html` <!-- Usemin Block --> will take care of minification.
     // cssmin: {
     //   
     // },
+
+    //https://www.npmjs.org/package/grunt-html2js
+    html2js: {
+      options: {
+        base: "dist"
+      },
+      main: {
+        src: ['dist/views/*.html'],
+        dest: 'dist/javascripts/templates.js'
+      },
+    },
+
     htmlmin: {
       dist: {
         // See yeoman generated angular project
@@ -177,8 +190,9 @@ module.exports = function (grunt) {
           src: [
             '*.{ico,txt}',
             '.htaccess',
-            'bower_components/**/*',
             'w3c/*',
+            'fonts/*',
+            'php/*',
             'images/**/*',
             'apple-touch*',
             'stylesheets/fonts/*',
@@ -188,7 +202,8 @@ module.exports = function (grunt) {
             '504.html',
             'index.html',
             'ajax/**/*',
-            'template/**/*'
+            'template/**/*',
+            'views/**/*'
           ]
         }, {
           expand: true,
@@ -205,23 +220,6 @@ module.exports = function (grunt) {
         dest: '.tmp/stylesheets/',
         src: '{,*/}*.css'
       }
-    },
-    concurrent: {
-      server: [
-        // 'coffee:dist',
-        'copy:styles'
-      ],
-      test: [
-        // 'coffee',
-        'copy:styles'
-      ],
-      dist: [
-        // 'coffee',
-        'copy:styles',
-        // 'imagemin',
-        'svgmin',
-        'htmlmin'
-      ]
     },
     karma: {
       unit: {
@@ -261,7 +259,6 @@ module.exports = function (grunt) {
 
     grunt.task.run([
       'clean:server',
-      'concurrent:server',
       'connect:livereload',
       'open',
       'watch'
@@ -270,22 +267,22 @@ module.exports = function (grunt) {
 
   grunt.registerTask('test', [
     'clean:server',
-    'concurrent:test',
     'connect:test',
     'karma:unit'
   ]);
 
   grunt.registerTask('build', [
-    'clean:dist',
-    //'test',
-    'useminPrepare',
-    'concurrent:dist',
-    'concat',
-    'copy:dist',
-    'cssmin',
-    // 'uglify',
-    'rev',
-    'usemin'
+    'clean:dist',       //cleans out the dist folder
+    //'test',           //runs unit tests on app folder using phantom (gut check)
+    'useminPrepare',    //looks at index file to find css/js blocks for minification
+    'concat',           //concatenates js/css files into one. useminPrepare defines this by scanning index.php
+    'copy:dist',        //copies necessary extra files from app to dist
+    'html2js',          //compiles templates into js
+    'cssmin',           //minifies the styles
+    // 'uglify',        //obfuscates and shirinks the js file
+    'rev',              //adds unique hash to scripts.js and styles.css to avoid browser caching
+    'usemin',           //updates index with minified files and css with revisioned images
+    'clean:server'      //cleans .tmp
   ]);
 
   grunt.registerTask('default', ['build']);
