@@ -2,7 +2,7 @@
 	
 
 // Declare app level module which depends on filters, and services
-angular.module('phpMongoAdmin', ['ngRoute','ngSanitize','phpMongoAdmin.filters', 'phpMongoAdmin.directives', 'phpMongoAdmin.mDatabase', 'phpMongoAdmin.mSettings', 'ui.bootstrap', 'Store']).
+angular.module('phpMongoAdmin', ['templates-main','ngRoute','ngSanitize','phpMongoAdmin.filters', 'phpMongoAdmin.directives', 'phpMongoAdmin.mDatabase', 'phpMongoAdmin.mSettings', 'ui.bootstrap', 'Store']).
   config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/help', {templateUrl: 'views/help.html', controller: 'cHelp'});
     $routeProvider.when('/settings', {templateUrl: 'views/settings.html', controller: 'cSettings'});

@@ -21,6 +21,10 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 	$scope.displayMode = 2;
 	$scope.tableHeadings = [];
 	$scope.i_back = true; //should default to background creation indexes
+	
+	$scope.renaming = false;
+	$scope.oldName = "";
+	$scope.renameError = "";
 
 	$scope.query = "";
 	$scope.fields = "";
@@ -46,6 +50,7 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
    	 	
 		$rootScope.selectedDB = $routeParams.name;
 		$rootScope.selectedCol = $routeParams.collection;
+		$scope.oldName = $rootScope.selectedCol;
 
 		//Restore query params from settings if possible
 		$scope.query = Settings.getQuery($rootScope.selectedDB,$rootScope.selectedCol);
@@ -194,6 +199,27 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 	$scope.addIndex = function(index) {
 		if($scope.db.readonly) return;
 		Database.addIndex($rootScope.selectedDB,$rootScope.selectedCol,$scope.i_name,$scope.i_index,$scope.i_unique,$scope.i_back,$scope.i_drop,$scope.i_sparse);		
+	};
+
+	//==================================================================
+	// Renames a collection if the name has changed
+	$scope.renameCollection = function(newName) {
+		if($scope.db.readonly) return;
+		if(newName!=$rootScope.selectedCol) {
+			var promise = Database.renameCollection($rootScope.selectedDB,$rootScope.selectedCol,newName);
+			promise.success(function(data) {
+				if(data!=="false") {
+					$location.path("db/"+$rootScope.selectedDB+"/"+newName);
+				} else {
+					$scope.renameError = "Error. Probably do not have permission."
+				}
+			});
+			promise.error(function() {
+				$scope.renameError = "Error. Unknown.";
+			});
+		} else {
+			$scope.renaming=false;
+		}
 	};
 
 	//==================================================================

@@ -68,7 +68,7 @@ angular.module('phpMongoAdmin.filters', [])
 //Inserts a loading spinner if the value is null
 .filter('healthDecode', function() {
 	return function(value) {
-		if(value==null || value==undefined) return "<i class='fa fa-spinner fa-spin'></i>";
+		if(value==null || value==undefined) return "<i class='fa fa-spinner fa-spin'></i> Running Healthcheck";
 		switch(value) {
 			case 0: return "<i class='fa fa-check-circle'></i> Healthy";
 			case 1: return "<i class='fa fa-exclamation-triangle'></i> Can't connect";

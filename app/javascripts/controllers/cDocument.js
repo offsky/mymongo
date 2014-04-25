@@ -72,6 +72,7 @@ angular.module('phpMongoAdmin').controller('cDocument', ['$scope', '$rootScope',
 		console.log("cancel");
 		$scope.currDoc = $rootScope.doc;
 		$scope.dirty = false;
+		if($scope.selectedDoc=="new") $location.path('/db/' + $rootScope.selectedDB + '/' + $rootScope.selectedCol); //go to the list
 	};
 
 	//==================================================================
@@ -84,8 +85,11 @@ angular.module('phpMongoAdmin').controller('cDocument', ['$scope', '$rootScope',
 		$scope.saving = true;
 
 		var promise = Database.saveDocument($rootScope.selectedDB,$rootScope.selectedCol,$rootScope.selectedDoc,$scope.currDoc);
-		promise.then(function() {
+		promise.success(function(data) {
 			$scope.saving = false;
+			if($scope.selectedDoc=="new" && data!=="0") {
+				$location.path('/db/' + $rootScope.selectedDB + '/' + $rootScope.selectedCol + '/' + data); //go to the list
+			}
 		});
 	};
 

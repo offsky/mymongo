@@ -4,18 +4,19 @@
 	<h3><a href="#/db/{{selectedDB}}">{{ selectedDB }}</a></h3>
 	<br />
 	<div class="list-group">
-		<a ng-repeat="c in collections" class="list-group-item" ng-class="{active:c.name==collection.name}" href="#/db/{{selectedDB}}/{{c.name}}"><span class="title">{{c.name}}</span><span class="badge">{{c.stats.count | bignumber}}</span></a>
+		<a ng-repeat="c in collections" class="list-group-item" ng-class="{active:c.name==collection.name}" href="#/db/{{selectedDB}}/{{c.name}}"><span class="title" ng-class="{longtext:c.name.length>16,verylongtext:c.name.length>20}">{{c.name}}</span><span class="badge">{{c.stats.count | bignumber}}</span></a>
 	</div>
 	<span ng-show="db.stats.collections!=undefined">{{collections.length | number:0}} Collections</span>
 </div>
-<div class="col-md-10" ng-show="allCollections[selectedDB]!=undefined && collection==undefined">
+<div class="col-md-10">
+<div ng-show="allCollections[selectedDB]!=undefined && collection==undefined">
 	<h3>Collection Not Found</h3>
 	<p>Sorry, there is no collection nammed {{selectedCol}} in this database.</p>
 </div>
-<div class="col-md-10" ng-show="allCollections[selectedDB]==undefined && collection==undefined">
+<div ng-show="allCollections[selectedDB]==undefined && collection==undefined">
 	<i class='fa fa-spinner fa-spin'></i> Loading...
 </div>
-<div class="col-md-10" ng-hide="collection==undefined">
+<div ng-hide="collection==undefined">
 
 	<ul class="nav nav-pills pull-right">
 		<li ng-class="{active:tab==0}"><a ng-click="tab=0">Documents</a></li>
@@ -29,7 +30,18 @@
 	<div ng-show="tab==3" class="panel panel-primary">
 		<div class="panel-heading"><b>Actions</b></div>
 		<div class="panel-body">
-			<button class="btn btn-danger" ng-hide="db.readonly" ng-click="deleteCollection()">Delete Collection</button>
+			<button class="btn btn-info" ng-hide="db.readonly || renaming" ng-click="renaming=true">Rename Collection</button>
+			
+			<div ng-show="renaming" class="container"><div class="row">
+				<div class="col-md-6"><input type="text" class="form-control" ng-model="oldName" placeholder="New Name" /></div>
+				<div class="col-md-3">
+					<button type="button" class="btn btn-default" ng-click="renaming=false">cancel</button>
+					<button class="btn btn-success" ng-click="renameCollection(oldName)">Rename</button>
+				</div>
+				<div class="col-md-3">{{ renameError }}</div>
+			</div></diV>
+
+			<button class="btn btn-danger" ng-hide="db.readonly || renaming" ng-click="deleteCollection()">Delete Collection</button>
 			<span ng-show="db.readonly">Your config file has this DB set to read-only mode, so no edits are possible.</span>
 		</div>
 	</div>
@@ -136,8 +148,8 @@
 		<div class="panel-footer" ng-hide="error || documents==undefined || documents==[]">
 			Query found {{ explain.matches }} documents in {{ explain.time | duration }}. It scanned {{ explain.scanned }} documents using index "{{ explain.index }}".
 		</div>
-		<div class="panel-footer">
-			<span ng-hide="explainFull"><i class='fa fa-spinner fa-spin'></i> Calculating total documents...</span>
+		<div class="panel-footer" ng-hide="explainFull===null">
+			<span ng-hide="explainFull!==undefined"><i class='fa fa-spinner fa-spin'></i> Calculating total documents...</span>
 			<span ng-show="explainFull">Without a limit, query found {{ explainFull.matches | number }} documents in {{ explainFull.time | duration }}. It scanned {{ explainFull.scanned | number }} documents using index "{{ explainFull.index }}".</span>
 		</div>
 		<div class="panel-footer error" ng-show="error">{{error}}</div>
@@ -176,6 +188,10 @@
 	   <pre>Page: {{page}} / {{numPages}} <span class="pull-right">docs per page:<select ng-model="pageSize" ng-change="update();" ng-options="n.name for n in pageSizeOptions"></select></span></pre>
 	</span>
 
+	<br />
+	<a href="#/db/{{selectedDB}}/{{selectedCol}}/new" class="btn btn-info" ng-hide="db.readonly">New Document</a>
+
+</div>
 </div>
 
 </div></div>

@@ -13,15 +13,16 @@
 
 	<div class="showDoc" ng-show="doc && doc._id">
 		<div id="jsoneditor" jsoneditor="currDoc" dirty="dirty" readonly="{{db.readonly}}"></div>
+		<div class="pull-right small">Use the action menu to add fields.</div>
 
-		<div class="editDoc" ng-show="!db.readonly && confirm==0 && dirty==true">
+		<div class="editDoc" ng-show="!db.readonly && confirm==0 && (dirty==true || doc._id=='assigned after save')">
 			<button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
 			<button type="button" class="btn btn-success" ng-click="save()">Save</button>
 		</div>
 
 		<div ng-show="saving"><br /><i class='fa fa-spinner fa-spin'></i> Saving...</div>
 
-		<div class="delDoc" ng-hide="db.readonly">
+		<div class="delDoc" ng-hide="db.readonly || selectedDoc=='new'">
 			<button ng-show="confirm==0" type="button" class="btn btn-warning" ng-hide="confirm" ng-click="confirm=1">Delete Document</button>
 			<span ng-show="confirm==1">
 				Are you sure?<br /><br />

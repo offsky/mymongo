@@ -130,6 +130,7 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 	// Gets one db by name 
 	function get(dbname) {
 		// console.log("get db",dbname,$rootScope.databases);
+		if($rootScope.databases==null || $rootScope.databases==undefined) return null
 		return $rootScope.databases[dbname];
 	};
 
@@ -200,6 +201,29 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 			.error(function(data) {
 				console.log("ERROR adding collection",data);
 			});
+	};
+
+	//==================================================================
+	// Renames a collection
+	function renameCollection(dbname,oldName,newName) {
+		console.log("renameCollection",dbname,oldName,newName);
+		if(newName==undefined) return;
+		if(oldName==undefined) return;
+		if(dbname==undefined) return;
+
+		var promise = $http.post(apiPath + '/collection_rename.php','db='+dbname+'&col='+oldName+'&new='+newName, {'headers': {'Content-Type': 'application/x-www-form-urlencoded'}});
+		
+		promise.success(function(data) {
+			if(data!=="false") {
+				$rootScope.allCollections[dbname]=undefined;
+				getCollections(newName);
+			}
+		});
+		promise.error(function(data) {
+			console.log("ERROR renaming collection",data);
+		});
+		
+		return promise
 	};
 
 	//==================================================================
@@ -372,8 +396,10 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 			.success(function(data) {
 				$rootScope.explainFull = data.explain;
 				$rootScope.error = data.error;
-				$rootScope.nolimit = parseInt(data.explain.matches);
-				console.log("explain Got");
+				
+				if(data.explain) $rootScope.nolimit = parseInt(data.explain.matches);
+				else $rootScope.nolimit = null;
+
 				// console.log(data);
 				$rootScope.$broadcast('update_docs');
 			})
@@ -404,6 +430,12 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 
 		$rootScope.doc = {};
 		
+		if(id=="new") {
+			$rootScope.doc._id = "assigned after save";
+			$rootScope.$broadcast('update_doc');
+			return;
+		}
+
 		$http.get(apiPath + '/document.php?db='+dbname+'&col='+collection+'&id='+id)
 			.success(function(data) {
 				$rootScope.doc = data;
@@ -464,7 +496,7 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 
 	return {
 		init: init, get: get, doHealthcheck:doHealthcheck, getHealthcheck:getHealthcheck, runPerformance:runPerformance, 
-		getCollections:getCollections, addCollection:addCollection, deleteCollection:deleteCollection, 
+		getCollections:getCollections, addCollection:addCollection, deleteCollection:deleteCollection, renameCollection:renameCollection,
 		getTableHeadings:getTableHeadings, getUsers:getUsers, 
 		getIndexes:getIndexes, deleteIndex:deleteIndex, addIndex:addIndex,
 		explainQuery:explainQuery, cleanQuery:cleanQuery, getDocuments:getDocuments,

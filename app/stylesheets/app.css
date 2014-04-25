@@ -30,8 +30,16 @@ h2, h3 { margin-top:2px;}
 .sidebar { overflow:hidden;  text-overflow: ellipsis;}
 .sidebar .badge { font-weight: 200; font-size:0.7em;}
 .sidebar .list-group-item { padding: 10px 6px; width:170px; height:40px;}
-.sidebar .title { float: left; display:block; overflow:hidden; text-overflow:ellipsis; width:120px; }
+.sidebar .title { float: left; display:block; overflow:hidden; text-overflow:ellipsis; width:114px; }
 .sidebar h3 { margin-bottom:3px;}
+.sidebar .longtext { font-size: 0.8em;}
+.sidebar .verylongtext { font-size: 0.7em;}
+
+@media (max-width: 991px) { 
+	.sidebar {
+		display:none;
+	}
+}
 
 /* Home */
 .vDatabases td i.host { color:#999; margin-left: 20px;}
