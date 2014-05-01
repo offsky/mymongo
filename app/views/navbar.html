@@ -18,7 +18,7 @@
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span ng-show="selectedDB">{{selectedDB}}</span><span ng-hide="selectedDB">Select DB</span> <b class="caret"></b></a>
           <ul class="dropdown-menu">
-            <li ng-repeat="db in databases"><a href="#/db/{{db.name}}" ng-class="{selected:db.name==selectedDB}">{{db.name}}</a></li>
+            <li ng-repeat="db in databases track by $index"><a href="#/db/{{db.name}}" ng-class="{selected:db.name==selectedDB}">{{db.name}}</a></li>
             <li class="divider"></li>
             <li><a href="#/databases">Overview</a></li>
           </ul>

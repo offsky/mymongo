@@ -4,7 +4,7 @@
 	<h3><a href="#/db/{{selectedDB}}">{{ selectedDB }}</a></h3>
 	<br />
 	<div class="list-group">
-		<a ng-repeat="c in collections" class="list-group-item" ng-class="{active:c.name==collection.name}" href="#/db/{{selectedDB}}/{{c.name}}"><span class="title" ng-class="{longtext:c.name.length>16,verylongtext:c.name.length>20}">{{c.name}}</span><span class="badge">{{c.stats.count | bignumber}}</span></a>
+		<a ng-repeat="c in collections track by $index" class="list-group-item" ng-class="{active:c.name==collection.name}" href="#/db/{{selectedDB}}/{{c.name}}"><span class="title" ng-class="{longtext:c.name.length>16,verylongtext:c.name.length>20}">{{c.name}}</span><span class="badge">{{c.stats.count | bignumber}}</span></a>
 	</div>
 	<span ng-show="db.stats.collections!=undefined">{{collections.length | number:0}} Collections</span>
 </div>
@@ -94,7 +94,7 @@
 			</thead>
 			<tbody>
 				<tr ng-show="indexes==undefined || indexes=={}"><td colspan="8"><i class='fa fa-spinner fa-spin'></i> Loading...</td></tr>
-				<tr ng-repeat="index in indexes">
+				<tr ng-repeat="index in indexes track by $index">
 					<td>{{index.name}}</td>
 					<td>{{index.key}}</td>
 					<td ng-bind-html="index.unique | bool"></td>
@@ -159,14 +159,14 @@
 			<thead>
 				<tr>
 					<th class="small" width="190">ID</th>
-					<th ng-repeat="cols in tableHeadings">{{cols}}</th>
+					<th ng-repeat="cols in tableHeadings track by $index">{{cols}}</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr ng-show="documents==undefined || documents==[]"><td colspan="{{tableHeadings.length+1}}"><i class='fa fa-spinner fa-spin'></i> Loading Documents...</td></tr>
-				<tr ng-repeat="doc in documents">
+				<tr ng-repeat="doc in documents track by $index">
 					<td class="small" width="190"><a href="#/db/{{selectedDB}}/{{selectedCol}}/{{doc._id.$id}}">{{doc._id.$id}}</a></td>
-					<td ng-repeat="cols in tableHeadings">{{doc[cols]}}</td>
+					<td ng-repeat="cols in tableHeadings track by $index">{{doc[cols]}}</td>
 				</tr>
 			</tbody>
 		</table>
@@ -174,7 +174,7 @@
 		<table ng-show="displayMode==2" class="table table-striped table-hover doctable">
 			<tbody>
 				<tr ng-show="documents==undefined || documents==[]"><td colspan="2"><i class='fa fa-spinner fa-spin'></i> Loading...</td></tr>
-				<tr ng-repeat="doc in documents">
+				<tr ng-repeat="doc in documents track by $index">
 					<td class="small" width="190"><a href="#/db/{{selectedDB}}/{{selectedCol}}/{{doc._id.$id}}">{{doc._id.$id}}</a></td><td class="json" ng-bind-html="doc | colorjson"></td>
 				</tr>
 			</tbody>
@@ -184,7 +184,7 @@
 	<span ng-hide="nolimit!==undefined"><i class='fa fa-spinner fa-spin'></i> Calculating total pages...</span>
 
 	<span ng-hide="documents==undefined || documents==[] || pageSize.name>documents.length || nolimit==undefined">
-		<pagination total-items="nolimit" page="page" max-size="maxSize" items-per-page="pageSize.name" class="pagination-sm" boundary-links="true" rotate="true" num-pages="numPages" on-select-page="selectPage(page)"></pagination>
+		<pagination total-items="nolimit" ng-model="page" page="page" max-size="maxSize" items-per-page="pageSize.name" class="pagination-sm" boundary-links="true" rotate="true" num-pages="numPages" on-select-page="selectPage(page)"></pagination>
 	   <pre>Page: {{page}} / {{numPages}} <span class="pull-right">docs per page:<select ng-model="pageSize" ng-change="update();" ng-options="n.name for n in pageSizeOptions"></select></span></pre>
 	</span>
 

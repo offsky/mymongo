@@ -315,7 +315,7 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 
 		$rootScope.documents = null;
 		$rootScope.explain = null;
-		$rootScope.nolimit = null;
+		// $rootScope.nolimit = null; //this line causes pagination to reset to 1 each time.  It will get set in explain anyway, so its ok
 		$rootScope.error = null;
 		
 		$http.get(apiPath + '/documents.php?db='+dbname+'&col='+collection+'&query='+query+'&fields='+fields+'&sort='+sort+'&page='+page+'&num='+num)

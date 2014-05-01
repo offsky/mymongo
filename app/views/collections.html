@@ -71,7 +71,7 @@
 				<tr><th>User</th><th>readOnly</th></tr>
 			<thead>
 			<tbody>
-				<tr ng-repeat="user in users"><th>{{ user.user }}</th><td>{{ user.readOnly }}</td></tr>
+				<tr ng-repeat="user in users track by $index"><th>{{ user.user }}</th><td>{{ user.readOnly }}</td></tr>
 			</tbody>
 		</table>
 
@@ -100,7 +100,7 @@
 		<tbody>
 			<tr ng-show="databases && databases.length==0"><td colspan="7"><i class='fa fa-exclamation-triangle'></i> No databases are configured in config.php.  Please look at php/config_template.php for an example config file. Make a copy of this and rename it config.php and then put your Mongo DB credentials inside.</td></tr>
 			<tr ng-show="collections==undefined || collections=={}"><td colspan="7"><i class='fa fa-spinner fa-spin'></i> Loading...</td></tr>
-			<tr ng-repeat="c in collections" class="text-right">
+			<tr ng-repeat="c in collections track by $index" class="text-right">
 				<td class="text-left"><a href="#/db/{{selectedDB}}/{{c.name}}">{{c.name}}</a></td>
 				<td>{{c.stats.count | number:0}}</td>
 				<td ng-bind-html="c.stats.size | bytes:1"></td>

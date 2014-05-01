@@ -120,6 +120,7 @@ angular.module('phpMongoAdmin').controller('cCollection', ['$scope', '$rootScope
 	//==================================================================
 	//
 	$scope.selectPage = function(num) {
+		console.log("select page",num);
 		$scope.page = num;
 
 		Database.getDocuments($rootScope.selectedDB,$rootScope.selectedCol,$scope.query,$scope.fields,$scope.sort,$scope.page,$scope.pageSize.name);

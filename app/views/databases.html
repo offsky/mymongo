@@ -16,7 +16,7 @@
 		<tbody>
 		<tr ng-show="databases==undefined"><td colspan="6"><i class='fa fa-spinner fa-spin'></i> Loading...</td></tr>
 		<tr ng-show="databases && databases.length==0"><td colspan="6"><i class='fa fa-exclamation-triangle'></i> No databases are configured in config.php.  Please look at php/config_template.php for an example config file. Make a copy of this and rename it config.php and then put your Mongo DB credentials inside.</td></tr>
-		<tr ng-repeat="db in databases">
+		<tr ng-repeat="db in databases track by $index">
 			<td><a href="#/db/{{db.name}}">{{db.name}}</a> <i class="host">{{db.hosts | noport}}</i></td>
 			<td><span ng-hide="db.stats.raw" ng-bind-html="db.stats.collections | number"></span><span ng-show="db.stats.raw" >Sharded</span></td>
 			<td ng-bind-html="db.stats.objects | number"></td>
@@ -39,7 +39,7 @@
 		</tr></thead>
 		<tbody>
 		<tr ng-show="connections==undefined || connections==null"><td colspan="6"><i class='fa fa-spinner fa-spin'></i> Loading...</td></tr>
-		<tr ng-repeat="con in connections">
+		<tr ng-repeat="con in connections track by $index">
 			<td>{{ con.server.username }}@{{ con.server.host }}:{{ con.server.port }}</td>
 			<td>{{ con.connection.last_ping*1000 | date }} in {{ con.connection.ping_ms }}ms</td>
 			<td>{{ con.connection.last_ismaster }}</td>
