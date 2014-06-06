@@ -3,10 +3,13 @@
 require_once("../../php/init.php");
 require_once("_helpers.php");
 
+
+
 $_GET['col'] = removeSlashes($_GET['col']);
 $_GET['query'] = removeSlashes($_GET['query']);
 $_GET['fields'] = removeSlashes($_GET['fields']);
 $_GET['sort'] = removeSlashes($_GET['sort']);
+
 
 //select database
 $db = findDB($_GET['db']);
@@ -39,7 +42,7 @@ $skip = $page*$num;
 $error = null;
 $explain = null;
 
-// error_log(json_encode($query));
+error_log(json_encode($_GET['query'])." = ".json_encode($query));
 
 //do the query
 $cursor = $m->find($query,$fields,$sort,$num,2000,$skip);

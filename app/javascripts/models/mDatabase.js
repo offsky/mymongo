@@ -337,6 +337,8 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 	//==================================================================
 	// Takes a query which should be json and make sure it is
 	function cleanQuery(query) {
+		return query;
+
 		query = "{"+query+"}";
 		// console.log("clean",query);
 
@@ -345,7 +347,7 @@ angular.module('phpMongoAdmin.mDatabase', []).factory('phpMongoAdmin.mDatabase',
 			var obj = angular.fromJson(query);
 		} catch(e) {
 			//conver ' to " and add missing quotes
-			//TODO: This will not work correctly when you use a literal : in a query
+			//TODO: This will not work correctly when you use a literal : or $ in a query
 			query = query.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":');
 		}
 
