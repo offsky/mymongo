@@ -147,7 +147,9 @@ class mymongo {
 		if(!class_exists("MongoClient")) return false;
 
 		//try to connect to the db. Keep a low timeout to prevent stalled DB crashing apache with hung PHP jobs
-		$flags = array("connectTimeoutMS" => 2000, "socketTimeoutMS"=>2000);
+		if(strpos(Mongo::VERSION, "1.5")!==false) $flags = array("connectTimeoutMS" => 2000, "socketTimeoutMS"=>2000);
+		else $flags = array("timeout" => 2000, "wtimeout"=>2000);
+
 		if(!empty($this->replicaSet)) $flags['replicaSet'] = $this->replicaSet;
 		if($this->ssl) $flags['ssl'] = true;
 		
@@ -343,7 +345,9 @@ class mymongo {
 		// select a collection (analogous to a relational database's table)
 		$collection = $this->db->selectCollection($this->MyTable);
 
-		$flags = array("timeout" => intval($timeout), "wtimeout" => intval($timeout));
+		if(strpos(Mongo::VERSION, "1.5")!==false) $flags = array("connectTimeoutMS" => intval($timeout), "socketTimeoutMS"=>intval($timeout));
+		else $flags = array("timeout" => intval($timeout), "wtimeout" => intval($timeout));
+		
 		if($safe) $flags['w'] = 1; else $flags['w'] = 0;
 
 		try {
@@ -387,7 +391,8 @@ class mymongo {
 		
 		$collection = $this->db->selectCollection($this->MyTable);
 		
-		$flags = array("timeout" => intval($timeout), "wtimeout" => intval($timeout));
+		if(strpos(Mongo::VERSION, "1.5")!==false) $flags = array("connectTimeoutMS" => intval($timeout), "socketTimeoutMS"=>intval($timeout));
+		else $flags = array("timeout" => intval($timeout), "wtimeout" => intval($timeout));
 		if($safe) $flags['w'] = 1; else $flags['w'] = 0;
 
 		try {
@@ -436,7 +441,10 @@ class mymongo {
 		
 		$collection = $this->db->selectCollection($this->MyTable);
 		
-		$flags = array("multiple" => true, "timeout" => intval($timeout), "wtimeout" => intval($timeout), "upsert" => $upsert);
+		if(strpos(Mongo::VERSION, "1.5")!==false) $flags = array("connectTimeoutMS" => intval($timeout), "socketTimeoutMS"=>intval($timeout));
+		else $flags = array("timeout" => intval($timeout), "wtimeout" => intval($timeout));
+		$flags["multiple"] = true;
+		$flags['upsert'] = $upsert;
 		if($safe) $flags['w'] = 1; else $flags['w'] = 0;
 
 		try {

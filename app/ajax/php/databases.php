@@ -1,13 +1,20 @@
 <?php
+//fast = 1 will bypass connecting and just print out the contents of the config file
+//one = 'name' will only connect to one db
 
 require_once("../../php/init.php");
 
 $dbs = array();
 
+$connectall = (empty($_GET['fast']) && empty($_GET['one']));
+$fast = !empty($_GET['fast']);
+if(empty($_GET['one'])) $_GET['one'] = "";
+
 //loop through each db configured in the config file. 
 //If fast is set thats it. If fast is unset do a healthcheck and gather info.
 foreach($MYMONGO as $db) {
-	if(empty($_GET['fast']) || (!empty($_GET['one']) && $_GET['one']==$db['name']) ) {
+	if($connectall || $_GET['one']==$db['name']) {
+
 		$test = new mymongo($db['hosts'],$db['user'],$db['password'],$db['name'],$db['replicaSet'],$db['ssl']);
 		$db['health'] = $test->health($db['replicaSet'],$db['adminCollection']);
 		
@@ -22,7 +29,7 @@ foreach($MYMONGO as $db) {
 	}
 	unset($db['password']); //for security
 
-	if(empty($_GET['one']) || $_GET['one']==$db['name'] ) $dbs[$db['name']] = $db;
+	if($fast || $connectall || $_GET['one']==$db['name']) $dbs[$db['name']] = $db;
 }
 
 echo json_encode($dbs);
