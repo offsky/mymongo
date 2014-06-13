@@ -4,37 +4,13 @@
 
 	Copyright Toodledo 2014
 	
+	define $mongoErrorLog as a global outside of this class
+	also define $beta=true outside this class to turn on extra logging
 */
 
-$mongodb_calls = 0; //keeps track of number of db calls per page (for stats if enabled)
-$mongodb_querytime = 0; //keeps track of the total tile waiting for mongo
-$mongodb_callLog = array(); //set to false to prevent loging of queries
-
-$verbose = false;
-//a callback used for verbose logging
-function mongo_log_cb($a, $b, $c) { 
-	global $mongoErrorLog; 
-	if($mongoErrorLog) {
-		switch ($a) {
-			case MongoLog::RS: $a="REPLSET"; break;
-			case MongoLog::CON: $a= "CON"; break;
-			case MongoLog::IO: $a= "IO"; break;
-			case MongoLog::SERVER: $a= "SERVER"; break;
-			case MongoLog::PARSE: $a= "PARSE"; break;
-		} 
-		switch ($b) {
-			case MongoLog::WARNING: $b= "WARN"; break;
-			case MongoLog::INFO: $b= "INFO";break;
-			case MongoLog::FINE: $b= "FINE"; break;
-		}
-		
-		error_log($a." ".$b." ".$c."\n",3,$mongoErrorLog);
-	} 
-}
 
 class mymongo {
 	public $connected = false; //true when we are connected to a server
-
 	private $MyHost = null; //the server that I am connecting to in the cloud
 	private $MyHosts = null; //Generated from $MyHosts, this is an array of the individual hosts
 	private $MyUser = null; //my username for the database on that server (not the same as my username for the cloud service)
@@ -45,10 +21,15 @@ class mymongo {
 	private $ssl = false;
 	private $connectionType = 0; //A debugging variable. 0 means as specified, 1 means with replica set disabled, 2 means first of pair used, 3 means other of pair after query
 	
+	private $mongodb_timeout = 2000; //default timeout in ms for most calls
+	private $verbose = false;
+	private $mongodb_calls = 0; //keeps track of number of db calls per page (for stats if enabled)
+	private $mongodb_querytime = 0; //keeps track of the total time waiting for mongo
+	private $mongodb_callLog = array(); //set to false to prevent loging of queries
+
 	public $m = null; //the internal reference to the mongo driver
 	public $db = null; //the internal reference to the collection that we are working on
 	public $lastErr = null;
-	public $lastErrMsg = null;
 	
 
 /* MYMONGO ===========================================================================
@@ -58,7 +39,7 @@ class mymongo {
 	Returns true/false on success/fail.
 */
 	public function mymongo($host, $user, $pass, $database, $replicaSet=null, $ssl=false) {
-		global $beta, $verbose;
+		global $beta;
 		
 		$this->MyHost = $host;
 		$this->MyHosts = explode(",", $this->MyHost);
@@ -68,10 +49,10 @@ class mymongo {
 		$this->replicaSet = $replicaSet;
 		if($ssl) $this->ssl = true;
 		
-		if($verbose) { //will turn on verbose logging to identify problems
+		if($this->verbose) { //will turn on verbose logging to identify problems
 			MongoLog::setModule(MongoLog::ALL);
 			MongoLog::setLevel(MongoLog::ALL);
-			MongoLog::setCallback('mongo_log_cb');
+			MongoLog::setCallback(array($this,'mongo_log_cb'));
 		}
 		if(!empty($beta)) {
 			global $mongoBypassConnect; //I can set this global flag to prevent mongo from connecting. Use this for testing what happens when mongo connection fails
@@ -142,13 +123,14 @@ class mymongo {
 /* CONNECTCLIENT ==================================================================================
 	Connects the MongoClient using the class settings.
 */
-	private function connectClient() {		
+	private function connectClient() {
+
 		if(empty($this->MyHost)) return false;
 		if(!class_exists("MongoClient")) return false;
 
-		//try to connect to the db. Keep a low timeout to prevent stalled DB crashing apache with hung PHP jobs
-		if(strpos(Mongo::VERSION, "1.5")!==false) $flags = array("connectTimeoutMS" => 2000, "socketTimeoutMS"=>2000);
-		else $flags = array("timeout" => 2000, "wtimeout"=>2000);
+		$this->log_db_mark("STARTING CONNECT");
+
+		$flags = array("connectTimeoutMS" => $this->mongodb_timeout, "socketTimeoutMS"=>$this->mongodb_timeout, "wTimeout"=>$this->mongodb_timeout);
 
 		if(!empty($this->replicaSet)) $flags['replicaSet'] = $this->replicaSet;
 		if($this->ssl) $flags['ssl'] = true;
@@ -329,7 +311,6 @@ class mymongo {
 		return false;
 	}
 
-
 /* INSERT ================================================================================
 	Inserts an object into a table. 
 	Since object is passed by reference, it will return with the _id field set.
@@ -345,9 +326,7 @@ class mymongo {
 		// select a collection (analogous to a relational database's table)
 		$collection = $this->db->selectCollection($this->MyTable);
 
-		if(strpos(Mongo::VERSION, "1.5")!==false) $flags = array("connectTimeoutMS" => intval($timeout), "socketTimeoutMS"=>intval($timeout));
-		else $flags = array("timeout" => intval($timeout), "wtimeout" => intval($timeout));
-		
+		$flags = array("socketTimeoutMS" => intval($timeout), "wTimeoutMS"=>intval($timeout));
 		if($safe) $flags['w'] = 1; else $flags['w'] = 0;
 
 		try {
@@ -391,8 +370,7 @@ class mymongo {
 		
 		$collection = $this->db->selectCollection($this->MyTable);
 		
-		if(strpos(Mongo::VERSION, "1.5")!==false) $flags = array("connectTimeoutMS" => intval($timeout), "socketTimeoutMS"=>intval($timeout));
-		else $flags = array("timeout" => intval($timeout), "wtimeout" => intval($timeout));
+		$flags = array("socketTimeoutMS" => intval($timeout), "wTimeoutMS"=>intval($timeout));
 		if($safe) $flags['w'] = 1; else $flags['w'] = 0;
 
 		try {
@@ -441,8 +419,7 @@ class mymongo {
 		
 		$collection = $this->db->selectCollection($this->MyTable);
 		
-		if(strpos(Mongo::VERSION, "1.5")!==false) $flags = array("connectTimeoutMS" => intval($timeout), "socketTimeoutMS"=>intval($timeout));
-		else $flags = array("timeout" => intval($timeout), "wtimeout" => intval($timeout));
+		$flags = array("socketTimeoutMS" => intval($timeout), "wTimeoutMS"=>intval($timeout));
 		$flags["multiple"] = true;
 		$flags['upsert'] = $upsert;
 		if($safe) $flags['w'] = 1; else $flags['w'] = 0;
@@ -496,6 +473,9 @@ class mymongo {
 		}
 		try {
 			$cursor = $collection->find($query,$fields)->timeout($timeout);
+			if(method_exists($cursor,"maxTimeMS")) {
+				$cursor->maxTimeMS($timeout); //added in mongo driver 1.5
+			}
 			if(!empty($sort)) $cursor->sort($sort);
 			if(!empty($skip)) $cursor->skip($skip);
 			if(!empty($limit)) $cursor->limit($limit);
@@ -525,7 +505,7 @@ class mymongo {
 			$explain = $cursor->explain();
 		} catch(MongoException $e) {
 			$this->log_db_error("EXPLAIN",$this->MyTable,$e->getMessage(),$e->getCode(),"");
-			$this->performance($start,"EXPLAIN","",false);
+			$this->performance($start,"EXPLAIN",$query,false);
 			return null;
 		}
 
@@ -735,8 +715,10 @@ class mymongo {
 				"out" => array("inline" => 1)//	"out" => array("replace" => $out)));
 				);
 			if(!empty($query)) $command['query'] = $query;
-						
-			$result = $this->db->command($command,array("timeout"=>30000)); 
+			
+			$flags = array("socketTimeoutMS" => 30000);
+
+			$result = $this->db->command($command,$flags); 
 	
 		} catch(MongoException $e) {
 			$this->log_db_error("MAPREDUCE",$this->MyTable,$e->getMessage(),$e->getCode(),$this->MyTable);
@@ -1124,18 +1106,18 @@ class mymongo {
 	if on beta, prints out some timing information
 */
 	private function performance($start,$type,$query=null,$success=true) {
-		global $beta,$mongodb_querytime,$mongodb_calls,$mongodb_callLog;
+		global $beta;
 		
 		if(!empty($beta)) {
 			$elapsed = (microtime(true)-$start)*1000; //ms
-			$mongodb_querytime+=$elapsed;
+			$this->mongodb_querytime+=$elapsed;
 
-			$mongodb_calls++;
+			$this->mongodb_calls++;
 
-			if($mongodb_callLog!==false) {
+			if($this->mongodb_callLog!==false) {
 				$object = bin2hex(serialize($query));
-				if($success) $mongodb_callLog[] = $type." : ".$elapsed." S #".$object;
-				else $mongodb_callLog[] = $type." : ".$elapsed." F #".$object;
+				if($success) $this->mongodb_callLog[] = $type." : ".$elapsed." S #".$object;
+				else $this->mongodb_callLog[] = $type." : ".$elapsed." F #".$object;
 			}
 			//echo $elapsed."ms $type $this->MyTable<br />";
 		
@@ -1154,11 +1136,10 @@ class mymongo {
 
 	// @codeCoverageIgnoreStart
 	public function print_performance() {
-		global $mongodb_querytime,$mongodb_calls,$mongodb_callLog;
-		echo "<br />db calls:".$mongodb_calls.". querytime:".floor($mongodb_querytime)."ms.";
-		if($mongodb_callLog!==false) {
+		echo "<br />db calls:".$this->mongodb_calls.". querytime:".floor($this->mongodb_querytime)."ms.";
+		if($this->mongodb_callLog!==false) {
 			echo "<pre>";
-			foreach($mongodb_callLog as $call) {
+			foreach($this->mongodb_callLog as $call) {
 				$pieces = explode("#", $call);
 				echo $pieces[0];
 				echo pack("H*" , $pieces[1]);
@@ -1204,8 +1185,8 @@ class mymongo {
 */
 	// @codeCoverageIgnoreStart
 	private function log_db_mark($mark) {
-		global $mongoErrorLog, $verbose;
-		if($mongoErrorLog && $verbose) error_log($mark."\n",3,$mongoErrorLog); 
+		global $mongoErrorLog;
+		if($mongoErrorLog && $this->verbose) error_log($mark."\n",3,$mongoErrorLog); 
 	}
 	// @codeCoverageIgnoreEnd
 	
@@ -1220,7 +1201,6 @@ class mymongo {
 		if(stristr($error,"Operation now in progress")) $error = "Timeout ($error)"; //"Operation now in progress" is code for timeout
 		
 		$this->lastErr = $code;
-		$this->lastErrMsg = $error;
 
 		$self = $PHP_SELF ? $PHP_SELF : $_SERVER["PHP_SELF"];
 		if(empty($self)) $self = $_SERVER['SCRIPT_NAME'];
@@ -1267,6 +1247,18 @@ class mymongo {
 	}
 	// @codeCoverageIgnoreEnd
 
+/* stuffTimeIntoObjectID ==========================================================================
+	Helper function that turns a time into an object id so that we can run a query on the id based on time
+*/
+	public function stuffTimeIntoObjectID($time=0) {
+		if(empty($time)) $time = time();
+
+		$hex = dechex($time);
+		$hex = str_pad($hex, 8, "0", STR_PAD_LEFT);
+		
+		return new MongoId($hex."0000000000000000");
+	}
+
 /* errorFrequency ==========================================================================
 	Given an error file path, it opens the file, counts the errors and how long ago the 10th
 	newest error is.
@@ -1275,13 +1267,36 @@ class mymongo {
 	private function errorFrequency($file) {
 		$lines = file($file); 
 		$count = count($lines);
-		//print_r($lines);
-	
-		$older = $lines[$count-10];
+		
+		$older = $lines[$count-($x+1)];
 		if($older) $older = $this->extractTime($older);
 
 		$difference = time()-$older;
-		return array($count,$difference);
+		return array($count,$difference,$lines[$count-1]);
+	}
+	// @codeCoverageIgnoreEnd
+
+/* mongo_log_cb ==========================================================================
+a callback used for verbose logging. 
+*/
+	// @codeCoverageIgnoreStart
+	function mongo_log_cb($a, $b, $c) { 
+		global $mongoErrorLog; 
+		if($mongoErrorLog) {
+			switch ($a) {
+				case MongoLog::RS: $a="REPLSET"; break;
+				case MongoLog::CON: $a= "CON"; break;
+				case MongoLog::IO: $a= "IO"; break;
+				case MongoLog::SERVER: $a= "SERVER"; break;
+				case MongoLog::PARSE: $a= "PARSE"; break;
+			} 
+			switch ($b) {
+				case MongoLog::WARNING: $b= "WARN"; break;
+				case MongoLog::INFO: $b= "INFO";break;
+				case MongoLog::FINE: $b= "FINE"; break;
+			}
+			error_log($a." ".$b." ".$c."\n",3,$mongoErrorLog);
+		}
 	}
 	// @codeCoverageIgnoreEnd
 }
