@@ -45,9 +45,11 @@
 		<a href="https://github.com/Toodledo/mymongo"><i class='fa fa-github-alt'></i> GitHub</a> | 
 		<a href="http://docs.mongodb.org/manual/">MongoDB</a> | 
 		<a href="http://www.php.net/mongo/">PHP::Mongo</a> | 
+		<a href="http://www.querymongo.com">SQL->Mongo</a> | 
 		<span ng-hide="client.driver">PHP Mongo Driver not <a href="http://www.php.net/manual/en/mongo.installation.php">installed</a></span>
 		<span ng-show="client.driver">Local Driver version: <a href="https://jira.mongodb.org/browse/PHP">{{ client.driver }}</a>.
-			<br />ping_interval: {{ client.ping }} &nbsp;&nbsp; is_master_interval: {{ client.ismaster }} &nbsp;&nbsp; long_as_object: {{ client.long }} &nbsp;&nbsp; native_long: {{ client.long }}
+
+		<br />ping_interval: {{ client.ping }} &nbsp;&nbsp; is_master_interval: {{ client.ismaster }} &nbsp;&nbsp; long_as_object: {{ client.long }} &nbsp;&nbsp; native_long: {{ client.long }}
 		</span>
 		
 
