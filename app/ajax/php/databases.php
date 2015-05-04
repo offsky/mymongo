@@ -13,9 +13,9 @@ if(empty($_GET['one'])) $_GET['one'] = "";
 //loop through each db configured in the config file. 
 //If fast is set thats it. If fast is unset do a healthcheck and gather info.
 foreach($MYMONGO as $db) {
-	if($connectall || $_GET['one']==$db['name']) {
+	if($connectall || $_GET['one']==$db['db']) {
 
-		$test = new mymongo($db['hosts'],$db['user'],$db['password'],$db['name'],$db['replicaSet'],$db['ssl']);
+		$test = new mymongo($db['hosts'],$db['user'],$db['password'],$db['db'],$db['replicaSet'],$db['ssl']);
 		$db['health'] = $test->health($db['replicaSet'],$db['adminCollection']);
 		
 		$info = $test->db_info();

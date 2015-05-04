@@ -14,7 +14,7 @@ if($db['readonly']) {
 $_POST['col'] = removeSlashes($_POST['col']);
 $_POST['index'] = removeSlashes($_POST['index']);
 
-$m = new mymongo($db['hosts'],$db['user'],$db['password'],$db['name'],$db['replicaSet'],$db['ssl']);
+$m = new mymongo($db['hosts'],$db['user'],$db['password'],$db['db'],$db['replicaSet'],$db['ssl']);
 $m->changeTable($_POST['col']);
 
 $index = json_decode($_POST['index']);

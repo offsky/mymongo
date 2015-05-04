@@ -13,7 +13,7 @@ if($db['readonly']) {
 $_POST['col'] = removeSlashes($_POST['col']);
 $_POST['new'] = removeSlashes($_POST['new']);
 
-$m = new mymongo($db['hosts'],$db['user'],$db['password'],$db['name'],$db['replicaSet'],$db['ssl']);
+$m = new mymongo($db['hosts'],$db['user'],$db['password'],$db['db'],$db['replicaSet'],$db['ssl']);
 
 $success = $m->renameCollection($_POST['col'],$_POST['new']);
 

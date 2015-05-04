@@ -14,7 +14,7 @@ if($db['readonly']) {
 $_POST['col'] = removeSlashes($_POST['col']);
 $_POST['doc'] = removeSlashes($_POST['doc']);
 
-$m = new mymongo($db['hosts'],$db['user'],$db['password'],$db['name'],$db['replicaSet'],$db['ssl']);
+$m = new mymongo($db['hosts'],$db['user'],$db['password'],$db['db'],$db['replicaSet'],$db['ssl']);
 
 //select collection
 $m->changeTable($_POST['col']);

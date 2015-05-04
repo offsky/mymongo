@@ -10,7 +10,7 @@ $_GET['sort'] = removeSlashes($_GET['sort']);
 
 //select database
 $db = findDB($_GET['db']);
-$m = new mymongo($db['hosts'],$db['user'],$db['password'],$db['name'],$db['replicaSet'],$db['ssl']);
+$m = new mymongo($db['hosts'],$db['user'],$db['password'],$db['db'],$db['replicaSet'],$db['ssl']);
 
 //select collection
 $m->changeTable($_GET['col']);

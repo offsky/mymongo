@@ -11,7 +11,7 @@ if(empty($db['adminCollection'])) die(-1);//adminCollection disabled;
 //start timer
 $start = microtime(true);
 
-$success = $m = new mymongo($db['hosts'],$db['user'],$db['password'],$db['name'],$db['replicaSet'],$db['ssl']);
+$success = $m = new mymongo($db['hosts'],$db['user'],$db['password'],$db['db'],$db['replicaSet'],$db['ssl']);
 $m->changeTable($db['adminCollection']);
 
 if(!$success) die(-2); //couldn't connect

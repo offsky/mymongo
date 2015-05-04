@@ -6,7 +6,7 @@ require_once("_helpers.php");
 
 //select database
 $db = findDB($_GET['db']);
-$m = new mymongo($db['hosts'],$db['user'],$db['password'],$db['name'],$db['replicaSet'],$db['ssl']);
+$m = new mymongo($db['hosts'],$db['user'],$db['password'],$db['db'],$db['replicaSet'],$db['ssl']);
 
 $_GET['col'] = removeSlashes($_GET['col']);
 
