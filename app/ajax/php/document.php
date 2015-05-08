@@ -21,6 +21,7 @@ $query = array('_id' => new MongoId($id));
 $doc = $m->findOne($query);
 
 $doc = private_transformation_read($_GET['db'],$_GET['col'],$doc); //in config.php
+$doc = removeMongoBinData($doc);
 
 echo json_encode($doc);
 

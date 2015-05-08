@@ -59,10 +59,14 @@ if($cursor!==null) {
 	while($doc = $m->getNext($cursor)) {
 		if($doc==-1) break; //Mongo connection error
 		if(empty($doc['_id'])) break; //Mongo error
+		
 		$doc = private_transformation_read($_GET['db'],$_GET['col'],$doc); //in config.php
+		$doc = removeMongoBinData($doc);
+
 		$docs[] = $doc;
 	}
 }
+
 echo json_encode(array("docs"=>$docs,"explain"=>$explain,"error"=>$error));
 
 ?>
